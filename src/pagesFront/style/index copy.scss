@@ -54,7 +54,105 @@ header {
   padding: 0.125rem 0.25rem 0;
   .panel {
     position: relative;
-    height: 3.67rem;
+    height: 1.8rem;
+    width: 2.6rem;
+    padding: 0.1875rem;
+    margin-bottom: 0.1875rem;
+    margin-left: 0.5rem;
+    border: 1px solid rgba(25, 186, 139, 0.17);
+    background: url(../assets/front/images/line（1）.png) rgba(255, 255, 255, 0.04);
+    &::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 10px;
+      height: 10px;
+      border-top: 2px solid #02a6b5;
+      border-left: 2px solid #02a6b5;
+      content: "";
+    }
+    &::after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      border-top: 2px solid #02a6b5;
+      border-right: 2px solid #02a6b5;
+      content: "";
+    }
+    .panel-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      &::before {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 10px;
+        height: 10px;
+        border-bottom: 2px solid #02a6b5;
+        border-left: 2px solid #02a6b5;
+        content: "";
+      }
+      &::after {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 10px;
+        height: 10px;
+        border-bottom: 2px solid #02a6b5;
+        border-right: 2px solid #02a6b5;
+        content: "";
+      }
+    }
+    h2 {
+      height: 0.6rem;
+      color: #fff;
+      text-align: center;
+      font-size: 0.25rem;
+      line-height: 0.6rem;
+      font-weight: normal;
+      a {
+        color: #fff;
+        text-decoration: none;
+        margin: 0 0.125rem;
+      }
+    }
+    .chart {
+      height: 3rem;
+    }
+    img {
+      width: 100%;
+      height: 100%;
+      padding: 10px;
+      // animation: radius 1.5s ease-out infinite forwards; 
+    }
+    .bar {
+      position: relative;
+      .boxBg{
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border: solid 5px #cc0000;
+        animation: radius 1s ease-out infinite forwards alternate;
+      }
+      img{
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding: 10px;
+      }
+      height: 100%;
+      width: 100%;
+    }
+  }
+  .panel1 {
+    position: relative;
+    height: 3.1rem;
     padding: 0.1875rem;
     margin-bottom: 0.1875rem;
     border: 1px solid rgba(25, 186, 139, 0.17);
@@ -125,26 +223,6 @@ header {
       width: 100%;
       height: 100%;
       // animation: radius 1.5s ease-out infinite forwards; 
-    }
-    .bar {
-      position: relative;
-      .boxBg{
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border: solid 3px #cc0000;
-        animation: radius 1s ease-out infinite forwards alternate;
-      }
-      img{
-        position: absolute;
-        left: 0;
-        top: 0;
-        padding: 10px;
-      }
-      height: 100%;
-      width: 100%;
     }
   }
 }
@@ -248,7 +326,7 @@ header {
     height: 8.0375rem;
     background: url(../assets/front/images/lbx.png);
     background-size: 100% 100%;
-    // animation: rotate1 15s linear infinite;
+    animation: rotate1 15s linear infinite;
     opacity: 0.6;
   }
   .map3 {
@@ -260,7 +338,7 @@ header {
     height: 7.075rem;
     background: url(../assets/front/images/jt.png);
     background-size: 100% 100%;
-    // animation: rotate2 10s linear infinite;
+    animation: rotate2 10s linear infinite;
     opacity: 0.6;
   }
 

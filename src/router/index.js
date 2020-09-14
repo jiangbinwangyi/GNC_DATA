@@ -81,7 +81,7 @@ export const constantRoutes = [
       meta: { name: '基础概况' }
     }, {
       path: 'relation',
-      component: () => import('@/pagesFront/relation'),
+      component: () => import('@/pagesFront/relation_copy'),
       meta: { name: '知识图谱' }
     }, {
       path: 'track',
@@ -89,7 +89,7 @@ export const constantRoutes = [
       meta: { name: '行为轨迹' }
     }, {
       path: '3Dmodel',
-      component: () => import('@/pagesFront/3Dmodel'),
+      component: () => import('@/pagesFront/3Dmodel_copy'),
       meta: { name: '卫星模型' }
     }]
   },

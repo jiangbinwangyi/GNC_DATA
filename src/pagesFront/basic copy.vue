@@ -18,7 +18,7 @@
         <div class="no-hd">
           <ul>
             <li>
-              <countTo :start-val="0" :end-val="basicData.healthy.time[basicData.healthy.time.length - 1]" :duration="50" />
+              <countTo :start-val="0" :end-val="basicData.healthy.time[basicData.healthy.time.length - 1]" :duration="500" />
             </li>
             <li>
               <countTo :start-val="0" :end-val="count.total" :duration="300" />
@@ -459,7 +459,7 @@ export default {
       },
       mapOption: {
         title: {
-          text: '星敏感器校正速度状态监控',
+          text: 'GNC系统整体健康状态监控',
           textStyle: {
             color: '#fff'
           },
@@ -472,20 +472,13 @@ export default {
             type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
           }
         },
-        legend: {
-          textStyle: {
-            color: '#4c9bfd'
-          },
-          left: 'center',
-          top: '12%'
-        },
         grid: {
           left: '0%',
           right: '0%',
           bottom: '0',
           containLabel: true
         },
-        // color: myColor[0],
+        color: myColor[0],
         xAxis: {
           name: '(ms)',
           type: 'category',
@@ -497,10 +490,10 @@ export default {
         },
         yAxis: {
           name: '健康值',
-          // maxInterval: 20,
+          maxInterval: 10,
           type: 'value',
-          min: 95,
-          max: 104,
+          min: 50,
+          max: 100,
           axisLabel: {
             color: 'rgba(255,255,255,.6)',
             fontSize: '12'
@@ -520,121 +513,27 @@ export default {
           }
         },
         visualMap: {
-          show: false
-          // pieces: [{
-          //   gt: 97,
-          //   lte: 105,
-          //   color: myColor[0]
-          // }, {
-          //   gt: 0,
-          //   lte: 97,
-          //   color: myColor[1]
-          // }]
+          show: false,
+          pieces: [{
+            gt: 50,
+            lte: 97.5,
+            color: myColor[1]
+          }, {
+            gt: 97.5,
+            lte: 100,
+            color: myColor[0]
+          }]
         },
         series: [{
-          name: '矫正速度Vx',
           data: this.$store.state.first.basicData.healthy.data,
           type: 'line',
-          itemStyle: {
-            normal: {
-              color: '#8cd5c2', // 改变折线点的颜色
-              lineStyle: {
-                color: 'rgba(198, 223, 89, 0.5)' // 改变折线颜色
-              }
-            }
-          },
-          areaStyle: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [{
-                offset: 0, color: 'rgb(198, 223, 89)' // 0% 处的颜色
-              }, {
-                offset: 1, color: '#0a37b1' // 100% 处的颜色
-              }],
-              global: false // 缺省为 false
-            }
-          },
-          smooth: true
+          smooth: true,
           // areaStyle: {},
-          // markLine: {
-          //   data: [
-          //     { yAxis: 97, name: '故障阈值', lineStyle: { color: myColor[1] }}
-          //   ]
-          // }
-        },
-        {
-          name: '矫正速度Vy',
-          data: this.$store.state.first.basicData.healthy.data2,
-          type: 'line',
-          itemStyle: {
-            normal: {
-              color: '#8cd5c2', // 改变折线点的颜色
-              lineStyle: {
-                color: 'rgba(184, 187, 216, 0.5)' // 改变折线颜色
-              }
-            }
-          },
-          areaStyle: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [{
-                offset: 0, color: 'rgb(184, 187, 216)' // 0% 处的颜色
-              }, {
-                offset: 1, color: '#0a37b1' // 100% 处的颜色
-              }],
-              global: false // 缺省为 false
-            }
-          },
-          smooth: true
-          // areaStyle: {},
-          // markLine: {
-          //   data: [
-          //     { yAxis: 97, name: '故障阈值', lineStyle: { color: myColor[1] }}
-          //   ]
-          // }
-        },
-        {
-          name: '矫正速度Vz',
-          data: this.$store.state.first.basicData.healthy.data3,
-          type: 'line',
-          itemStyle: {
-            normal: {
-              color: '#8cd5c2', // 改变折线点的颜色
-              lineStyle: {
-                color: 'rgba(19, 235, 37, 0.5)' // 改变折线颜色
-              }
-            }
-          },
-          areaStyle: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [{
-                offset: 0, color: 'rgb(19, 235, 37)' // 0% 处的颜色
-              }, {
-                offset: 1, color: '#0a37b1' // 100% 处的颜色
-              }],
-              global: false // 缺省为 false
-            }
-          },
-          smooth: true
-          // areaStyle: {},
-          // markLine: {
-          //   data: [
-          //     { yAxis: 105, name: '故障阈值', lineStyle: { color: myColor[1] }}
-          //   ]
-          // }
+          markLine: {
+            data: [
+              { yAxis: 97.5, name: '故障阈值', lineStyle: { color: myColor[1] }}
+            ]
+          }
         }]
       }
     }

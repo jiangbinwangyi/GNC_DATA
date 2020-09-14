@@ -18,8 +18,10 @@ const state = {
   menuActive: '基础概况',
   basicData: {
     healthy: {
-      time: [500, 1000, 1500, 2000, 2500, 3000],
-      data: [98.6, 97.2, 96.3, 97.9, 98.4]
+      time: [500],
+      data: [100],
+      data2: [98.6],
+      data3: [99.6]
     },
     track: []
   }
@@ -36,12 +38,28 @@ const mutations = {
   setBasicData(state, data) {
     const time = state.basicData.healthy.time
     // const healthyData = state.basicData.healthy.data
-    state.basicData.healthy.time.push((time[time.length - 1]) + 500)
-    const newHealthyData = Math.floor(Math.random() * (1005 - 970 + 1) + 970)
+    state.basicData.healthy.time.push((time[time.length - 1]) + 100)
+
+    const newHealthyData = (Math.random() * (1005 - 980 + 1) + 970)
+    // const anything = state.basicData.healthy.data[ARR.length - 1]
+    // if ((time[time.length - 1] / 500) % 3 === 0) {
+    //   state.basicData.healthy.data.push(anything - newHealthyData)
+    // } else {
+    //   state.basicData.healthy.data.push(anything + newHealthyData)
+    // }
     state.basicData.healthy.data.push(parseInt(newHealthyData) / 10)
+
+    const newHealthyData2 = Math.floor(Math.random() * (1005 - 960 + 1) + 970)
+    state.basicData.healthy.data2.push(parseInt(newHealthyData2) / 10)
+
+    const newHealthyData3 = Math.floor(Math.random() * (1005 - 950 + 1) + 970)
+    state.basicData.healthy.data3.push(parseInt(newHealthyData3) / 10)
+
     if (time.length > 20) {
       state.basicData.healthy.time.shift()
       state.basicData.healthy.data.shift()
+      state.basicData.healthy.data2.shift()
+      state.basicData.healthy.data3.shift()
     }
 
     const count = (num) => {

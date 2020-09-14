@@ -187,7 +187,7 @@ export default {
 .mainbox{
   .panel.relationBox{
     width: 100%;
-    height: 11rem;
+    height: 12rem;
   }
 }
 

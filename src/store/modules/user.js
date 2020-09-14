@@ -132,7 +132,7 @@ const actions = {
   // 建立WS握手
   createWS({ commit }) {
     const operateId = Cookies.get('USERINFO_ID')
-    const ws = new WebSocket('ws://172.16.1.80:8081/webSocket/' + operateId)
+    const ws = new WebSocket('wss://ws.mmstat.com/ws' + operateId)
     ws.onopen = () => {
       ws.send(operateId)
       console.log('发送成功')
