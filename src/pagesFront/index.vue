@@ -15,6 +15,7 @@
           </el-dropdown-menu>
         </el-dropdown>
       </h1>
+      <div class="showSunTime" v-text="sunTime" />
     </header>
     <!-- 页面主体 -->
     <section class="mainbox">
@@ -34,7 +35,8 @@ import { mapState, mapMutations, mapActions } from 'vuex'
 export default {
   data() {
     return {
-      nowTime: ''
+      nowTime: '',
+      sunTime: ''
     }
   },
   computed: {
@@ -77,14 +79,17 @@ export default {
         const h = dt.getHours()
         const m = dt.getMinutes()
         const s = dt.getSeconds()
-        this.nowTime = '当前时间：' + y + '年' + mt + '月' + day + '-' + h + '时' + m + '分' + s + '秒'
+        this.setTime({
+          nowTime: '北京时间：' + y + '年' + mt + '月' + day + '日 ' + h + '时' + m + '分' + s + '秒',
+          sunTime: '星时：' + (y - 2010) + '年' + mt + '月' + day + '日 ' + h + '时' + m + '分' + s + '秒'
+        })
 
         this.setBasicData()
         t = setTimeout(time, 1000)
       }
       t = setTimeout(time, 1000)
     },
-    ...mapMutations('first', ['setMenuActive', 'setBasicData']),
+    ...mapMutations('first', ['setMenuActive', 'setBasicData', 'setTime']),
     ...mapActions('first', ['createWebsocket'])
   }
 }

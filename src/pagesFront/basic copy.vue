@@ -33,12 +33,9 @@
         </div>
       </div>
       <!-- 地图模块 -->
-      <div class="map">
-        <v-chart
-          :options="mapOption"
-          autoresize
-          style="height: 100%;width:100%"
-        />
+      <div class="panel relationBox">
+        <v-chart :options="option" class="echartBox" />
+        <div class="panel-footer" />
       </div>
     </el-col>
     <el-col :span="6">
@@ -66,6 +63,8 @@ import 'echarts'
 // ECharts.registerMap('china', china)
 import chinaMap from './china.json'
 ECharts.registerMap('china', chinaMap)
+
+import option from './data/world5.js'
 
 export default {
   components: {
@@ -456,89 +455,22 @@ export default {
             ]
           }
         ]
-      },
-      mapOption: {
-        title: {
-          text: 'GNC系统整体健康状态监控',
-          textStyle: {
-            color: '#fff'
-          },
-          left: 'center',
-          top: '2%'
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-          }
-        },
-        grid: {
-          left: '0%',
-          right: '0%',
-          bottom: '0',
-          containLabel: true
-        },
-        color: myColor[0],
-        xAxis: {
-          name: '(ms)',
-          type: 'category',
-          boundaryGap: false,
-          axisLabel: {
-            color: 'rgba(255,255,255,.6)'
-          },
-          data: this.$store.state.first.basicData.healthy.time
-        },
-        yAxis: {
-          name: '健康值',
-          maxInterval: 10,
-          type: 'value',
-          min: 50,
-          max: 100,
-          axisLabel: {
-            color: 'rgba(255,255,255,.6)',
-            fontSize: '12'
-          },
-          axisLine: {
-            lineStyle: {
-              color: 'rgba(255,255,255,.1)',
-              width: 2,
-              type: 'solid'
-            }
-          },
-          // y轴分割线
-          splitLine: {
-            lineStyle: {
-              color: 'rgba(255,255,255,.1)'
-            }
-          }
-        },
-        visualMap: {
-          show: false,
-          pieces: [{
-            gt: 50,
-            lte: 97.5,
-            color: myColor[1]
-          }, {
-            gt: 97.5,
-            lte: 100,
-            color: myColor[0]
-          }]
-        },
-        series: [{
-          data: this.$store.state.first.basicData.healthy.data,
-          type: 'line',
-          smooth: true,
-          // areaStyle: {},
-          markLine: {
-            data: [
-              { yAxis: 97.5, name: '故障阈值', lineStyle: { color: myColor[1] }}
-            ]
-          }
-        }]
       }
     }
   },
   computed: {
+    option() {
+      const data = this.$store.state.first.basicData.track
+      console.log(data)
+      data.forEach(item => {
+        option.series.push({
+          smooth: true,
+          type: 'line',
+          data: item
+        })
+      })
+      return option
+    },
     ...mapState('first', ['basicData'])
   },
   methods: {}

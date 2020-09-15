@@ -4,18 +4,20 @@ const state = {
   Websocket: null,
   menu: [{
     src: '/basic',
-    name: '基础概况'
-  }, {
-    src: '/relation',
-    name: '知识图谱'
+    name: '基础数据'
   }, {
     src: '/track',
-    name: '行为轨迹'
+    name: '实时数据'
   }, {
     src: '/3Dmodel',
-    name: '卫星模型'
+    name: '故障诊断'
+  }, {
+    src: '/relation',
+    name: '历史数据'
   }],
   menuActive: '基础概况',
+  nowTime: '',
+  sunTime: '',
   basicData: {
     healthy: {
       time: [500],
@@ -34,6 +36,10 @@ const mutations = {
   setMenuActive(state, data) {
     console.log(data)
     state.menuActive = data
+  },
+  setTime(state, data) {
+    state.nowTime = data.nowTime
+    state.sunTime = data.sunTime
   },
   setBasicData(state, data) {
     const time = state.basicData.healthy.time
@@ -62,24 +68,24 @@ const mutations = {
       state.basicData.healthy.data3.shift()
     }
 
-    const count = (num) => {
-      const curTime = (time[time.length - 1] - 3000) / 500 * 45 - 180
-      return Math.sin(Math.PI * ((curTime + (num * 45)) / 90)) * 180
-    }
-    const track = state.basicData.track
-    if (track.length === 0) {
-      state.basicData.track.push([count(0)])
-    } else if (track[track.length - 1].length === 6) {
-      state.basicData.track.push(count(track.length))
-    } else {
-      track.forEach((item, index) => {
-        if (item.length <= 8) {
-          item.push(count(index))
-        }
-      })
-    }
-    console.log(track)
-    state.basicData.track = track
+    // const count = (num) => {
+    //   const curTime = (time[time.length - 1] - 3000) / 500 * 45 - 180
+    //   return Math.sin(Math.PI * ((curTime + (num * 45)) / 90)) * 180
+    // }
+    // const track = state.basicData.track
+    // if (track.length === 0) {
+    //   state.basicData.track.push([count(0)])
+    // } else if (track[track.length - 1].length === 6) {
+    //   state.basicData.track.push(count(track.length))
+    // } else {
+    //   track.forEach((item, index) => {
+    //     if (item.length <= 8) {
+    //       item.push(count(index))
+    //     }
+    //   })
+    // }
+    // console.log(track)
+    // state.basicData.track = track
   }
 }
 

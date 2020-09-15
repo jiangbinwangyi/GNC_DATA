@@ -9,9 +9,6 @@ import ECharts from 'vue-echarts'
 import 'echarts'
 import 'echarts-gl'
 
-// 采用关系图实现的版本地址，欢迎前往查看，效果比此图更好，谢谢
-// https://gallery.echartsjs.com/editor.html?c=xO6bpzhc_c
-
 const colors = ['#8B78F6', '#F57474', '#56D0E3', '#F8B448', '#1089E7']
 const parts = [{
   name: '帆板',

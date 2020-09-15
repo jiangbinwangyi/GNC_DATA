@@ -1,63 +1,52 @@
 <template>
   <!-- 页面主体 -->
-  <el-row style="width: 100%" :gutter="20">
-    <el-col :span="6">
-      <div class="panel bar">
-        <v-chart :options="barOption" class="echartBox" />
-      </div>
-      <div class="panel pie">
-        <v-chart :options="pieOption" class="echartBox" />
-      </div>
-      <div class="panel line">
-        <v-chart :options="lineOption" class="echartBox" />
-      </div>
-    </el-col>
-    <el-col :span="12">
-      <!-- 数字模块 -->
-      <div class="no">
-        <div class="no-hd">
-          <ul>
-            <li>
-              <countTo :start-val="0" :end-val="basicData.healthy.time[basicData.healthy.time.length - 1]" :duration="50" />
-            </li>
-            <li>
-              <countTo :start-val="0" :end-val="count.total" :duration="300" />
-            </li>
-          </ul>
+  <div style="width: 100%">
+    <el-row style="width: 100%" :gutter="20">
+      <el-col :span="6">
+        <div class="panel pie">
+          <v-chart :options="pieOption" class="echartBox" />
         </div>
-        <div class="no-bd">
-          <ul>
-            <li>监控累计时长（ms）</li>
-            <li>信号量实时监控数量</li>
-          </ul>
+      </el-col>
+      <el-col :span="12" class="timeBox">
+        <div class="panel">
+          <p>{{ nowTime }}</p>
+          <p>{{ sunTime }}</p>
         </div>
-      </div>
-      <!-- 地图模块 -->
-      <div class="map">
-        <v-chart
-          :options="mapOption"
-          autoresize
-          style="height: 100%;width:100%"
-        />
-      </div>
-    </el-col>
-    <el-col :span="6">
-      <div class="panel bar2">
-        <v-chart :options="barOption2" class="echartBox" />
-      </div>
-      <div class="panel line2">
-        <v-chart :options="lineOption2" class="echartBox" />
-      </div>
-      <div class="panel pie2">
-        <v-chart :options="pieOption2" class="echartBox" />
-      </div>
-    </el-col>
-  </el-row>
+      </el-col>
+      <el-col :span="6">
+        <div class="panel pie2">
+          <v-chart :options="pieOption2" class="echartBox" />
+        </div>
+      </el-col>
+    </el-row>
+    <el-row style="width: 100%" :gutter="20">
+      <el-col :span="6">
+        <div class="panel bar">
+          <v-chart :options="barOption" class="echartBox" />
+        </div>
+        <div class="panel line2">
+          <v-chart :options="lineOption2" class="echartBox" />
+        </div>
+      </el-col>
+      <el-col :span="12">
+        <div class="panel relationBox">
+          <v-chart :options="mapOption" class="echartBox" />
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div class="panel line">
+          <v-chart :options="lineOption" class="echartBox" />
+        </div>
+        <div class="panel bar2">
+          <v-chart :options="barOption2" class="echartBox" />
+        </div>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import countTo from 'vue-count-to'
 
 import ECharts from 'vue-echarts'
 import 'echarts'
@@ -67,16 +56,17 @@ import 'echarts'
 import chinaMap from './china.json'
 ECharts.registerMap('china', chinaMap)
 
+import './data/world2.js'
+import option from './data/world5.js'
+
 export default {
   components: {
-    'v-chart': ECharts,
-    countTo
+    'v-chart': ECharts
   },
   data() {
     const myColor = ['#1089E7', '#F57474', '#56D0E3', '#F8B448', '#8B78F6']
 
     return {
-      nowTime: '',
       count: {
         total: 235411
       },
@@ -456,196 +446,45 @@ export default {
             ]
           }
         ]
-      },
-      mapOption: {
-        title: {
-          text: '星敏感器校正速度状态监控',
-          textStyle: {
-            color: '#fff'
-          },
-          left: 'center',
-          top: '2%'
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-          }
-        },
-        legend: {
-          textStyle: {
-            color: '#4c9bfd'
-          },
-          left: 'center',
-          top: '12%'
-        },
-        grid: {
-          left: '0%',
-          right: '0%',
-          bottom: '0',
-          containLabel: true
-        },
-        // color: myColor[0],
-        xAxis: {
-          name: '(ms)',
-          type: 'category',
-          boundaryGap: false,
-          axisLabel: {
-            color: 'rgba(255,255,255,.6)'
-          },
-          data: this.$store.state.first.basicData.healthy.time
-        },
-        yAxis: {
-          name: '健康值',
-          // maxInterval: 20,
-          type: 'value',
-          min: 95,
-          max: 104,
-          axisLabel: {
-            color: 'rgba(255,255,255,.6)',
-            fontSize: '12'
-          },
-          axisLine: {
-            lineStyle: {
-              color: 'rgba(255,255,255,.1)',
-              width: 2,
-              type: 'solid'
-            }
-          },
-          // y轴分割线
-          splitLine: {
-            lineStyle: {
-              color: 'rgba(255,255,255,.1)'
-            }
-          }
-        },
-        visualMap: {
-          show: false
-          // pieces: [{
-          //   gt: 97,
-          //   lte: 105,
-          //   color: myColor[0]
-          // }, {
-          //   gt: 0,
-          //   lte: 97,
-          //   color: myColor[1]
-          // }]
-        },
-        series: [{
-          name: '矫正速度Vx',
-          data: this.$store.state.first.basicData.healthy.data,
-          type: 'line',
-          itemStyle: {
-            normal: {
-              color: '#8cd5c2', // 改变折线点的颜色
-              lineStyle: {
-                color: 'rgba(198, 223, 89, 0.5)' // 改变折线颜色
-              }
-            }
-          },
-          areaStyle: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [{
-                offset: 0, color: 'rgb(198, 223, 89)' // 0% 处的颜色
-              }, {
-                offset: 1, color: '#0a37b1' // 100% 处的颜色
-              }],
-              global: false // 缺省为 false
-            }
-          },
-          smooth: true
-          // areaStyle: {},
-          // markLine: {
-          //   data: [
-          //     { yAxis: 97, name: '故障阈值', lineStyle: { color: myColor[1] }}
-          //   ]
-          // }
-        },
-        {
-          name: '矫正速度Vy',
-          data: this.$store.state.first.basicData.healthy.data2,
-          type: 'line',
-          itemStyle: {
-            normal: {
-              color: '#8cd5c2', // 改变折线点的颜色
-              lineStyle: {
-                color: 'rgba(184, 187, 216, 0.5)' // 改变折线颜色
-              }
-            }
-          },
-          areaStyle: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [{
-                offset: 0, color: 'rgb(184, 187, 216)' // 0% 处的颜色
-              }, {
-                offset: 1, color: '#0a37b1' // 100% 处的颜色
-              }],
-              global: false // 缺省为 false
-            }
-          },
-          smooth: true
-          // areaStyle: {},
-          // markLine: {
-          //   data: [
-          //     { yAxis: 97, name: '故障阈值', lineStyle: { color: myColor[1] }}
-          //   ]
-          // }
-        },
-        {
-          name: '矫正速度Vz',
-          data: this.$store.state.first.basicData.healthy.data3,
-          type: 'line',
-          itemStyle: {
-            normal: {
-              color: '#8cd5c2', // 改变折线点的颜色
-              lineStyle: {
-                color: 'rgba(19, 235, 37, 0.5)' // 改变折线颜色
-              }
-            }
-          },
-          areaStyle: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [{
-                offset: 0, color: 'rgb(19, 235, 37)' // 0% 处的颜色
-              }, {
-                offset: 1, color: '#0a37b1' // 100% 处的颜色
-              }],
-              global: false // 缺省为 false
-            }
-          },
-          smooth: true
-          // areaStyle: {},
-          // markLine: {
-          //   data: [
-          //     { yAxis: 105, name: '故障阈值', lineStyle: { color: myColor[1] }}
-          //   ]
-          // }
-        }]
       }
     }
   },
   computed: {
-    ...mapState('first', ['basicData'])
+    mapOption() {
+      const data = this.$store.state.first.basicData.track
+      console.log(data)
+      data.forEach(item => {
+        option.series.push({
+          smooth: true,
+          type: 'line',
+          data: item
+        })
+      })
+      return option
+    },
+    ...mapState('first', ['basicData', 'nowTime', 'sunTime'])
   },
   methods: {}
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 @import 'style/index.scss';
+
+.mainbox {
+  .panel.relationBox {
+    width: 100%;
+    height: 7.5rem;
+  }
+  .timeBox{
+    font-size: 28px;
+    color: #fff;
+    height: 3.67rem;
+    line-height: 1;
+    p {
+      padding-top: 0.8rem;
+      text-align: center;
+    }
+  }
+}
 </style>

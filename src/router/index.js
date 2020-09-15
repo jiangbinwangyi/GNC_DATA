@@ -78,19 +78,19 @@ export const constantRoutes = [
     children: [{
       path: 'basic',
       component: () => import('@/pagesFront/basic'),
-      meta: { name: '基础概况' }
-    }, {
-      path: 'relation',
-      component: () => import('@/pagesFront/relation_copy'),
-      meta: { name: '知识图谱' }
+      meta: { name: '基础数据' }
     }, {
       path: 'track',
       component: () => import('@/pagesFront/track'),
-      meta: { name: '行为轨迹' }
+      meta: { name: '实时数据' }
     }, {
       path: '3Dmodel',
       component: () => import('@/pagesFront/3Dmodel_copy'),
-      meta: { name: '卫星模型' }
+      meta: { name: '故障诊断' }
+    }, {
+      path: 'relation',
+      component: () => import('@/pagesFront/relation_copy'),
+      meta: { name: '历史数据' }
     }]
   },
   {
