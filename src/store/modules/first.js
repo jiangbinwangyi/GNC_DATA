@@ -25,7 +25,7 @@ const state = {
       data2: [98.6],
       data3: [99.6]
     },
-    track: []
+    track: [[0, 200, 0, 200, 0]]
   }
 }
 

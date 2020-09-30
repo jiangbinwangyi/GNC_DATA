@@ -354,13 +354,13 @@ const xData = (() => {
   const res = []
   for (let i = -180; i <= 180;) {
     res.push(i + '°')
-    i = i + 45
+    i = i + 90
   }
   return res
 })()
 
 const option = {
-  color,
+  color: color[0],
   xAxis: {
     type: 'category',
     boundaryGap: false,

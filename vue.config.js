@@ -99,14 +99,14 @@ module.exports = {
         target: 'http://172.16.1.100:8081/',
         changeOrigin: true,
         pathRewrite: {
-          '^/prod-api/upload/': ''
+          '^/dev-api/upload/': ''
         }
       },
       '/dev-api/meta/': {
         target: 'http://172.16.1.100:8081/',
         changeOrigin: true,
         pathRewrite: {
-          '^/prod-api/': ''
+          '^/dev-api/': ''
         }
       },
       '/prod-api/temp/': {

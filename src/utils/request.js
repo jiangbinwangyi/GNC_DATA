@@ -2,7 +2,8 @@ import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
-const baseURL = '/prod-api' // 局域网部署环境
+// const baseURL = '/prod-api' // 局域网部署环境
+const baseURL = '/dev-api' // 局域网部署环境
 // const baseURL = process.env.VUE_APP_BASE_API // 本地开发环境
 // create an axios instance
 const service = axios.create({

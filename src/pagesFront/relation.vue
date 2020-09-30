@@ -1,15 +1,46 @@
 <template>
-  <div class="panel relationBox">
-    <v-chart :options="option" class="echartBox" />
-  </div>
+  <!-- 页面主体 -->
+  <el-row style="width: 100%" :gutter="20" class="relationBox">
+    <el-col :span="6">
+      <div class="panel">
+        <v-chart :options="barOption" class="echartBox" />
+      </div>
+      <div class="panel">
+        <v-chart :options="pieOption" class="echartBox" />
+      </div>
+    </el-col>
+    <el-col :span="12">
+      <!-- 地图模块 -->
+      <div class="map">
+        <v-chart :options="option" autoresize class="echartBox" />
+      </div>
+    </el-col>
+    <el-col :span="6">
+      <div class="panel">
+        <v-chart :options="barOption2" class="echartBox" />
+      </div>
+      <div class="panel">
+        <v-chart :options="barOption3" class="echartBox" />
+      </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
+import dataTool from 'echarts/extension/dataTool'
 import ECharts from 'vue-echarts'
 import 'echarts'
 import 'echarts-gl'
+import 'element-ui'
 
-const colors = ['#8B78F6', '#F57474', '#56D0E3', '#F8B448', '#1089E7']
+// import china from './china.js'
+// ECharts.registerMap('china', china)
+import chinaMap from './china.json'
+ECharts.registerMap('china', chinaMap)
+
+const colors = ['#8B78F6', '#286c81', '#56D0E3', '#8B78F6', '#1089E7']
 const parts = [{
   name: '帆板',
   children: ['轴温1', '轴温2', '主份电机电流1', '主份电机电流2', '备份电机电流1', '备份电机电流2', '壳体温度1', '壳体温度2']
@@ -61,7 +92,7 @@ const getdata = function getData() {
   let arr = []
   arr.push(data)
   arr = handle(arr, 0)
-  console.log(arr)
+  // console.log(arr)
   return arr
 }
 var handle = function handleData(data, index, color = colors[4]) {
@@ -110,12 +141,458 @@ var handle = function handleData(data, index, color = colors[4]) {
   })
 }
 
+const boxData = dataTool.prepareBoxplotData([
+  [850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960],
+  [960, 940, 960, 940, 880, 800, 850, 880, 900, 840, 830, 790, 810, 880, 880, 830, 800, 790, 760, 800],
+  [880, 880, 880, 860, 720, 720, 620, 860, 970, 950, 880, 910, 850, 870, 840, 840, 850, 840, 840, 840],
+  [890, 810, 810, 820, 800, 770, 760, 740, 750, 760, 910, 920, 890, 860, 880, 720, 840, 850, 850, 780],
+  [890, 840, 780, 810, 760, 810, 790, 810, 820, 850, 870, 870, 810, 740, 810, 940, 950, 800, 810, 870]
+])
+
 export default {
+  name: '',
   components: {
     'v-chart': ECharts
   },
   data() {
+    const myColor = ['#1089E7', '#8B78F6', '#F57474', '#56D0E3', '#F8B448']
+
     return {
+      tableData: [{
+        date: '1',
+        name: '星敏Vx',
+        address: '星敏',
+        result: '严重',
+        method: '调试XXX'
+      }, {
+        date: '2',
+        name: '星敏Vy',
+        address: '星敏',
+        result: '严重',
+        method: '调试XXX'
+      }, {
+        date: '3',
+        name: '星敏Vz',
+        address: '星敏',
+        result: '严重',
+        method: '调试XXX'
+      }, {
+        date: '4',
+        name: '矫正时间',
+        address: '星敏',
+        result: '一般',
+        method: '调试XXX'
+      }],
+      nowTime: '',
+      count: {
+        total: 235411
+      },
+      barOption: {
+        title: {
+          text: '多信号箱型图',
+          textStyle: {
+            color: '#fff'
+          },
+          left: 'center',
+          top: '2%'
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        grid: {
+          left: '10%',
+          right: '10%',
+          bottom: '15%'
+        },
+        xAxis: {
+          type: 'category',
+          data: boxData.axisData,
+          boundaryGap: true,
+          nameGap: 30,
+          splitArea: {
+            show: false
+          },
+          axisLabel: {
+            formatter: '信号 {value}',
+            color: '#fff'
+          },
+          splitLine: {
+            show: false
+          }
+        },
+        yAxis: {
+          type: 'value',
+          min: 500,
+          axisLabel: {
+            color: '#fff'
+          },
+          splitArea: {
+            show: true
+          }
+        },
+        series: [
+          {
+            name: 'boxplot',
+            type: 'boxplot',
+            data: boxData.boxData,
+            tooltip: {
+              formatter(param) {
+                return [
+                  '星敏Vx ' + param.name + ': ',
+                  '星敏Vy: ' + param.data[5],
+                  '星敏Vz: ' + param.data[4],
+                  '矫正速度Vx: ' + param.data[3],
+                  '矫正速度Vy: ' + param.data[2],
+                  '矫正速度Vz: ' + param.data[1]
+                ].join('<br/>')
+              }
+            }
+          },
+          {
+            name: 'outlier',
+            type: 'scatter',
+            data: boxData.outliers
+          }
+        ]
+      },
+      pieOption: {
+        title: {
+          text: '星敏感器校正速度包络图',
+          textStyle: {
+            color: '#fff'
+          },
+          left: 'center',
+          top: '2%'
+        },
+        legend: {
+          textStyle: {
+            color: '#4c9bfd'
+          },
+          left: 'center',
+          top: '12%'
+        },
+        color: myColor,
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { // 坐标轴指示器，坐标轴触发有效
+            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+          }
+        },
+        grid: {
+          left: '0%',
+          right: '0%',
+          bottom: '0',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: ['1min', '2min', '3min', '4min', '5min', '6min', '7min', '8min'],
+          axisTick: {
+            show: false // 去除刻度线
+          },
+          axisLabel: {
+            color: '#4c9bfd' // 文本颜色
+          },
+          axisLine: {
+            show: false // 去除轴线
+          }
+        },
+        yAxis: {
+          type: 'value',
+          minInterval: 1,
+          min: -1,
+          max: 3,
+          axisTick: {
+            show: false // 去除刻度线
+          },
+          axisLabel: {
+            color: '#4c9bfd' // 文本颜色
+          },
+          axisLine: {
+            show: false // 去除轴线
+          },
+          boundaryGap: false, // 去除轴内间距
+          splitLine: {
+            lineStyle: {
+              color: '#012f4a' // 分割线颜色
+            }
+          }
+        },
+        series: [
+          {
+            name: '包络上限',
+            type: 'line',
+            smooth: true,
+            data: [1.1, 1.3, 1.1, 1.3, 1.1, 1.3, 1.1, 1.4, 1.1, 1.3, 1.1, 1.4]
+          },
+          {
+            name: '校正速度Vy',
+            type: 'line',
+            smooth: true,
+            data: [0.7, 1, 0.8, 1, 0.7, 1, 0.8, 1, 0.7, 1, 0.8, 1]
+          },
+          {
+            name: '包络下限',
+            type: 'line',
+            smooth: true,
+            data: [0.3, 0.5, 0.3, 0.5, 0.3, 0.5, 0.3, 0.5, 0.3, 0.5, 0.3, 0.6]
+          }
+        ]
+      },
+      barOption2: {
+        title: {
+          text: '星敏矫正速度监控',
+          textStyle: {
+            color: '#fff'
+          },
+          left: 'center',
+          top: '2%'
+        },
+        tooltip: {
+          formatter(params, ticket, callback) {
+            return Number(params.value[2].toFixed(2))
+          }
+        },
+        visualMap: {
+          show: false,
+          dimension: 2,
+          min: -1,
+          max: 1,
+          inRange: {
+            color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+          }
+        },
+        axisLabel: {
+          color: '#4c9bfd' // 文本颜色
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#4c9bfd'
+            // show: false
+          }
+        },
+        xAxis3D: {
+          name: '监测次数',
+          nameTextStyle: {
+            color: '#ccc',
+            fontSize: '13'
+          },
+          type: 'value'
+        },
+        yAxis3D: {
+          name: '检测时间',
+          type: 'value',
+          nameTextStyle: {
+            color: '#ccc',
+            fontSize: '13'
+          }
+        },
+        zAxis3D: {
+          name: '监测值',
+          type: 'value',
+          nameTextStyle: {
+            color: '#ccc',
+            fontSize: '13'
+          }
+        },
+        grid3D: {
+          viewControl: {
+            // projection: 'orthographic'
+          }
+        },
+        series: [{
+          type: 'surface',
+          wireframe: {
+            // show: false
+          },
+          equation: {
+            x: {
+              step: 0.5,
+              min: 1,
+              max: 5
+            },
+            y: {
+              step: 0.1,
+              min: 1,
+              max: 11
+            },
+            z: function(x, y) {
+              if (Math.abs(x) < 0 && Math.abs(y) < 11) {
+                return '-'
+              } else {
+                var ZZ = Math.sin(x / 5 * Math.PI) * Math.sin(y / 10 * Math.PI)
+                return Number(ZZ)
+              }
+            }
+          }
+        }]
+      },
+      barOption3: {
+        title: {
+          text: '星敏矫正速度监控',
+          textStyle: {
+            color: '#fff'
+          },
+          left: 'center',
+          top: '2%'
+        },
+        tooltip: {
+          formatter(params, ticket, callback) {
+            return Number(params.value[2].toFixed(2))
+          }
+        },
+        axisLabel: {
+          color: '#4c9bfd' // 文本颜色
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#4c9bfd'
+            // show: false
+          }
+        },
+        xAxis3D: {
+          name: '监测次数',
+          nameTextStyle: {
+            color: '#ccc',
+            fontSize: '13'
+          },
+          type: 'value'
+        },
+        yAxis3D: {
+          name: '检测时间',
+          type: 'value',
+          nameTextStyle: {
+            color: '#ccc',
+            fontSize: '13'
+          }
+        },
+        zAxis3D: {
+          name: '监测值',
+          type: 'value',
+          nameTextStyle: {
+            color: '#ccc',
+            fontSize: '13'
+          }
+        },
+        grid3D: {
+          viewControl: {
+            // projection: 'orthographic'
+          }
+        },
+        series: [{
+          type: 'surface',
+          color: myColor[0],
+          equation: {
+            x: {
+              step: 0.5,
+              min: 1,
+              max: 5
+            },
+            y: {
+              step: 0.5,
+              min: 1,
+              max: 4
+            },
+            z(x, y) {
+              return Math.sin(x / 8 * Math.PI) * Math.sin(y / 12 * Math.PI)
+            }
+          }
+        }, {
+          type: 'surface',
+          color: myColor[1],
+          equation: {
+            x: {
+              step: 0.5,
+              min: 1,
+              max: 5
+            },
+            y: {
+              step: 0.5,
+              min: 1,
+              max: 3
+            },
+            z(x, y) {
+              return Math.sin(x / 16 * Math.PI) * Math.sin(y / 20 * Math.PI)
+            }
+          }
+        }, {
+          type: 'surface',
+          color: myColor[2],
+          equation: {
+            x: {
+              step: 0.5,
+              min: 1,
+              max: 5
+            },
+            y: {
+              step: 0.5,
+              min: 1,
+              max: 3
+            },
+            z(x, y) {
+              return Math.sin(x / 32 * Math.PI) * Math.sin(y / 36 * Math.PI)
+            }
+          }
+        }]
+      },
+      lineOption2: {
+        title: {
+          text: '各部件健康指标分析',
+          textStyle: {
+            color: '#fff'
+          },
+          left: 'center'
+        },
+        tooltip: {},
+        radar: {
+          center: ['50%', '65%'],
+          radius: 65,
+          name: {
+            textStyle: {
+              color: '#fff'
+            }
+          },
+          splitArea: {
+            areaStyle: {
+              color: ['rgba(114, 172, 209, 0.2)'],
+              shadowColor: 'rgba(0, 0, 0, 0.3)',
+              shadowBlur: 10
+            }
+          },
+          axisLine: {
+            lineStyle: {
+              color: 'rgba(255, 255, 255, 0.2)'
+            }
+          },
+          splitLine: {
+            lineStyle: {
+              color: 'rgba(255, 255, 255, 0.2)'
+            }
+          },
+          indicator: [
+            { name: '帆板', max: 6500 },
+            { name: '惯性姿态敏感器', max: 16000 },
+            { name: '星敏感器', max: 30000 },
+            { name: '陀螺', max: 38000 },
+            { name: '动量轮', max: 52000 }
+          ]
+        },
+        series: [{
+          type: 'radar',
+          // areaStyle: {normal: {}},
+          data: [
+            {
+              value: [4300, 10000, 28000, 35000, 50000, 19000],
+              name: '各部件故障态势',
+              itemStyle: {
+                color: myColor[0]
+              },
+              areaStyle: {}
+            }
+          ]
+        }]
+      },
       option: {
         title: {
           text: '各零部件信号故障关系推断',
@@ -174,18 +651,26 @@ export default {
         ]
       }
     }
-  }
+  },
+  computed: {
+    ...mapState('first', ['basicData'])
+  },
+  methods: {}
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import 'style/index.scss';
-
-.mainbox{
-  .panel.relationBox{
-    width: 100%;
-    height: 12rem;
+.relationBox{
+  .panel{
+    height: 5.6rem;
+  }
+  .panel.map{}
+}
+.el-table.tableData {
+  background: none;
+  th, tr{
+    background: none;
   }
 }
-
 </style>

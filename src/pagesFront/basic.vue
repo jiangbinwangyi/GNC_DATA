@@ -30,7 +30,8 @@
       </el-col>
       <el-col :span="12">
         <div class="panel relationBox">
-          <v-chart :options="mapOption" class="echartBox" />
+          <v-chart :options="mapOption" class="echartBox" style="border:solid 1px #145e97" />
+          <div class="mapBorder" />
         </div>
       </el-col>
       <el-col :span="6">
@@ -475,12 +476,22 @@ export default {
   .panel.relationBox {
     width: 100%;
     height: 7.5rem;
+    position: relative;
+    .mapBorder{
+      position: absolute;
+      top: 19%;
+      left: 10%;
+      right: 10%;
+      bottom: 19%;
+      border-top: solid 1px #195BB9;
+      border-bottom: solid 1px #195BB9;
+    }
   }
   .timeBox{
     font-size: 28px;
-    color: #fff;
     height: 3.67rem;
     line-height: 1;
+    color: #F8B448;
     p {
       padding-top: 0.8rem;
       text-align: center;

@@ -85,11 +85,11 @@ export const constantRoutes = [
       meta: { name: '实时数据' }
     }, {
       path: '3Dmodel',
-      component: () => import('@/pagesFront/3Dmodel_copy'),
+      component: () => import('@/pagesFront/3Dmodel'),
       meta: { name: '故障诊断' }
     }, {
       path: 'relation',
-      component: () => import('@/pagesFront/relation_copy'),
+      component: () => import('@/pagesFront/relation'),
       meta: { name: '历史数据' }
     }]
   },
