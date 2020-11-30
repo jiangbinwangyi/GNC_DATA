@@ -1,0 +1,26 @@
+<button onclick="dd(Event, this)" id="test">cesh</button>
+<script>
+    function dd(event, self) {
+        console.log(new event(self))
+    }
+
+    document.querySelector('#test').addEventListener('click', (event) => {
+        console.log(event)
+    })
+
+    const arr = [{
+        name: 'dd',
+        age: 18
+    }, {
+        name: 'fgef',
+        age: 22
+    }]
+
+    arr.map(e => {
+        e.name += '666'
+        e.sex = '娜娜'
+    })
+
+    console.log(arr)
+    console.log(222)
+</script>

@@ -1,0 +1,96 @@
+<template>
+  <div class="myselfData">
+    <header>
+      <div class="showTime" v-text="nowTime" />
+      <h1>XX号卫星遥测数据分析 -
+        <el-dropdown @command="setMenuActive">
+          <span class="el-dropdown-link">
+            <a href="javascript:void(0);" style="font-size: 28px; color:#fff">{{ menuActive }}</a>
+            <i class="el-icon-arrow-down el-icon--right" style="font-size: 16px;color:#fff;padding-left:10px" />
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item v-for="item in menu" :key="item.src" :command="item.name">
+              <router-link :to="item.src">{{ item.name }}</router-link>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </h1>
+      <div class="showSunTime" v-text="sunTime" />
+    </header>
+    <!-- 页面主体 -->
+    <section class="mainbox">
+      <router-view />
+    </section>
+  </div>
+</template>
+
+<script>
+import { mapState, mapMutations, mapActions } from 'vuex'
+
+export default {
+  data() {
+    return {
+      nowTime: '',
+      sunTime: ''
+    }
+  },
+  computed: {
+    ...mapState('first', ['Websocket', 'menu', 'menuActive'])
+  },
+  watch: {
+    'Websocket': {
+      handler(newVal, old) {
+        if (newVal) {
+          newVal.onmessage = e => {
+            this.$router.push(e.data)
+          }
+        }
+      },
+      deep: true,
+      immediate: true
+    },
+    '$route': {
+      handler(newVal, old) {
+        this.setMenuActive(newVal.meta.name)
+      },
+      deep: true,
+      immediate: true
+    }
+  },
+  created() {
+    this.createWebsocket()
+    this.getNowTime()
+    document.querySelector('html').style.fontSize = (document.documentElement.clientWidth > 1024 ? 1024 : document.documentElement.clientWidth) / 16 + 'px'
+  },
+  methods: {
+    getNowTime() {
+      let t = null
+      const time = () => {
+        clearTimeout(t)
+        const dt = new Date()
+        const y = dt.getFullYear()
+        const mt = dt.getMonth() + 1
+        const day = dt.getDate()
+        const h = dt.getHours()
+        const m = dt.getMinutes()
+        const s = dt.getSeconds()
+        this.setTime({
+          nowTime: '北京时间：' + y + '年' + mt + '月' + day + '日 ' + h + '时' + m + '分' + s + '秒',
+          sunTime: '星时：' + (y - 2010) + '年' + mt + '月' + day + '日 ' + h + '时' + m + '分' + s + '秒'
+        })
+
+        this.setBasicData()
+        this.setBarData()
+        t = setTimeout(time, 1000)
+      }
+      t = setTimeout(time, 1000)
+    },
+    ...mapMutations('first', ['setMenuActive', 'setBasicData', 'setTime', 'setBarData']),
+    ...mapActions('first', ['createWebsocket'])
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+@import 'style/index.scss';
+</style>

@@ -1,0 +1,393 @@
+*{
+  padding: 0;
+  margin: 0;
+}
+/* 声明字体*/
+@font-face {
+  font-family: electronicFont;
+  src: url(../assets/front/font/DS-DIGIT.TTF);
+}
+.myselfData {
+  background: url(../assets/front/images/bg.png) no-repeat top center;
+  background-size: 100% 100%;
+  font-size: 0;
+  line-height: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  li {
+    list-style: none;
+  }
+  .echartBox{
+    width: 100%;
+    height: 100%;
+  }
+}
+header {
+  position: relative;
+  height: 1.2rem;
+  background-size: 100% 100%;
+  h1 {
+    padding: .05rem 0.4rem 0 0.2rem;
+    font-size: 0.475rem;
+    color: #b4c9a3;
+    line-height: 1rem;
+    width: 100%;
+    margin: 0;
+    display: inline-block;
+    width: auto;
+    border: solid 3px #27341b;
+    background: #27341b;
+    vertical-align: bottom;
+    img{
+      width: .8rem;
+      vertical-align: -20%;
+    }
+  }
+  .navbar.el-menu--horizontal{
+    display: inline-block;
+    width: auto;
+    vertical-align: bottom;
+    background: none;
+    border-color: #27341b;
+    overflow: hidden;
+    li.el-menu-item {
+      color: #fff;
+      margin-left: .1rem;
+      background: #415c29;
+      border: solid 1px #27341b;
+      &:hover, &:active, &:focus, &.is-active {
+        background-color: #27341b;
+        color: #fff;
+      }
+    }
+  }
+  .showTime, .showSunTime {
+    position: absolute;
+    left: 0.375rem;
+    line-height: 0.9375rem;
+    top: 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.25rem;
+  }
+  .showSunTime {
+    left: auto;
+    right: 0.375rem;
+  }
+}
+.lineBox{
+  background-color: rgba($color: #fff, $alpha: .3);
+  box-shadow: 0 0 10px 0 inset rgba($color: #b0dc88, $alpha: 1);
+  border: none;
+  .el-card__header{
+    font-size: .23rem;
+    padding: .2rem;
+    color: #fff;
+    border: none;
+  }
+  .el-card__body{
+    padding: .1rem .2rem;
+  }
+}
+// 页面主体盒子
+.mainbox {
+  display: flex;
+  margin: 0 auto;
+  padding: 0.125rem 0.25rem 0;
+  .panel {
+    position: relative;
+    padding: 0.1875rem;
+    margin-bottom: 0.1875rem;
+    background: url(../assets/front/images/line（1）.png) rgba(255, 255, 255, 0.04);
+    box-shadow: 0 0 .6rem 0 rgba(19,152,209,.6) inset;
+    &::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 10px;
+      height: 10px;
+      border-top: 2px solid #02a6b5;
+      border-left: 2px solid #02a6b5;
+      content: "";
+    }
+    &::after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      border-top: 2px solid #02a6b5;
+      border-right: 2px solid #02a6b5;
+      content: "";
+    }
+    .panel-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      &::before {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 10px;
+        height: 10px;
+        border-bottom: 2px solid #02a6b5;
+        border-left: 2px solid #02a6b5;
+        content: "";
+      }
+      &::after {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 10px;
+        height: 10px;
+        border-bottom: 2px solid #02a6b5;
+        border-right: 2px solid #02a6b5;
+        content: "";
+      }
+    }
+    h2 {
+      height: 0.6rem;
+      color: #fff;
+      text-align: center;
+      font-size: 0.28rem;
+      line-height: 0.6rem;
+      font-weight: normal;
+      a {
+        color: #fff;
+        text-decoration: none;
+        margin: 0 0.125rem;
+      }
+    }
+    .chart {
+      height: 3rem;
+    }
+    img {
+      width: 100%;
+      height: 100%;
+      // animation: radius 1.5s ease-out infinite forwards; 
+    }
+    .bar {
+      position: relative;
+      .boxBg{
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border: solid 3px #cc0000;
+        animation: radius 1s ease-out infinite forwards alternate;
+      }
+      img{
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding: 10px;
+      }
+      height: 100%;
+      width: 100%;
+    }
+  }
+}
+.no {
+  background: rgba(49, 61, 97, 0.1);
+  padding: 0.1875rem;
+  .no-hd {
+    position: relative;
+    border: 1px solid rgba(25, 186, 139, 0.17);
+    &::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      content: "";
+      width: 30px;
+      height: 10px;
+      border-top: 2px solid #02a6b5;
+      border-left: 2px solid #02a6b5;
+    }
+    &::after {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      content: "";
+      width: 30px;
+      height: 10px;
+      border-bottom: 2px solid #02a6b5;
+      border-right: 2px solid #02a6b5;
+    }
+    ul {
+      display: flex;
+      li {
+        position: relative;
+        flex: 1;
+        line-height: 1rem;
+        font-size: 0.875rem;
+        color: #ffeb7b;
+        text-align: center;
+        font-family: "electronicFont";
+      }
+      li:first-child {
+        &::after {
+          content: "";
+          position: absolute;
+          top: 25%;
+          right: 0;
+          height: 50%;
+          width: 1px;
+          background: rgba(255, 255, 255, 0.2);
+        }
+      }
+    }
+  }
+  .no-bd {
+    ul {
+      display: flex;
+      li {
+        flex: 1;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.225rem;
+        height: 0.5rem;
+        line-height: 0.5rem;
+        padding-top: 0.125rem;
+      }
+    }
+  }
+}
+.map {
+  height: 11rem;
+  overflow: hidden;
+  .chart {
+    height: 100%;
+  }
+}
+.mapBg {
+  position: absolute;
+  overflow: hidden;
+  left: 0;
+  right: 0;
+  top: 2.5rem;
+  height: 9.6rem;
+  margin: auto;
+  .map1 {
+    width: 6.475rem;
+    height: 6.475rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: url(../assets/front/images/map.png);
+    background-size: 100% 100%;
+    opacity: 0.3;
+  }
+  .map2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8.0375rem;
+    height: 8.0375rem;
+    background: url(../assets/front/images/lbx.png);
+    background-size: 100% 100%;
+    // animation: rotate1 15s linear infinite;
+    opacity: 0.6;
+  }
+  .map3 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 7.075rem;
+    height: 7.075rem;
+    background: url(../assets/front/images/jt.png);
+    background-size: 100% 100%;
+    // animation: rotate2 10s linear infinite;
+    opacity: 0.6;
+  }
+
+  @keyframes rotate1 {
+    from {
+      transform: translate(-50%, -50%)
+      rotate(0deg);
+    }
+    to {
+      transform: translate(-50%, -50%)
+      rotate(360deg);
+    }
+  }
+  @keyframes rotate2 {
+    from {
+      transform: translate(-50%, -50%)
+      rotate(0deg);
+    }
+    to {
+      transform: translate(-50%, -50%)
+      rotate(-360deg);
+    }
+  }
+  @keyframes radius {
+    0% {
+      transform: scale(0.95, 0.95);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1, 1);
+      opacity: 1;
+    }
+  }
+}
+/* 约束屏幕尺寸 */
+@media screen and (max-width: 1024px) {
+  html {
+    font-size: 42px !important;
+  }
+}
+@media screen and (min-width: 1920px) {
+  html {
+    font-size: 80px !important;
+  }
+}
+
+.el-input__inner, .el-button--medium, .el-input-group__append, .el-input-group__prepend{
+  border-radius: 0;
+  background-color: rgba(65, 92, 41, 0.5);
+  border-color: rgba(39, 52, 27, 1);
+  color: #fff;
+}
+.el-select .el-input.is-focus .el-input__inner{
+  border-color: #fff;
+}
+
+.el-menu-item, .el-input--medium, .el-select-dropdown__item, .el-tag{
+  font-size: .26rem;
+}
+.el-table{
+  background: none;
+  font-size: .2rem;
+  tr, th{
+    background-color: rgba($color: #415c29, $alpha: .5);
+    color: #fff;
+  }
+}
+.el-table__body tr.hover-row > td,
+.el-table--enable-row-hover .el-table__body tr:hover > td{
+  background-color: rgba($color: #415c29, $alpha: 0.5);
+}
+
+.el-table--medium th, .el-table--medium td{
+  padding: .15rem 0;
+}
+
+.el-progress-bar__outer,.el-progress-bar__inner{
+  border-radius: 0;
+}
+.el-form-item__label{
+  color: #fff;
+}
+.el-dialog{
+  background: rgba($color: #415c29, $alpha: 1);
+  .el-dialog__title, .el-dialog__body{
+    color: #fff;
+  }
+}
