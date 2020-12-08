@@ -3,9 +3,33 @@
   <div style="width: 100%">
     <el-row style="width: 100%" :gutter="20">
       <el-col :span="7">
-        <div class="panel pie" style="height: 5rem">
+        <div class="panel pie" style="height: 11.7rem">
           <h2>飞行器实时动作显示</h2>
-          <model-obj src="/static/3d/file.obj" mtl="/static/3d/file.mtl" :rotation="rotation" :scale="{ x: 1.6, y: 1.6, z: 1.6 }" :background-alpha="0" @on-load="modelOnLoad" />
+          <model-obj src="/static/3d/file.obj" mtl="/static/3d/file.mtl" style="width: auto; height: 4rem;" :rotation="rotation" :scale="{ x: 1.6, y: 1.6, z: 1.6 }" :background-alpha="0" @on-load="modelOnLoad" />
+          <h2>飞行器实时故障信息</h2>
+          <el-row :gutter="0" style="padding-top: .2rem">
+            <el-col :span="4">
+              <div v-for="(item, index) in part" :key="index" :span="6" style="position:relative; padding:.1rem;margin: 0 0 .2rem 0; border: solid 1px #ccc">
+                <div v-if="item.isErr" class="boxBg" style="width: 100%; left: 0" />
+                <p style="position: relative; z-index: 9;font-size: .15rem">{{ item.name }}</p>
+                <img v-show="item.pic" :src="item.pic" alt="帆板" style="position: relative; z-index: 10">
+              </div>
+            </el-col>
+            <el-col :span="20">
+              <h3 style="margin-top: 0">故障模式</h3>
+              <p>星箭分离66s，双太阳翼未展开</p>
+              <p>故障时间：2020-11-20 16:26:13</p>
+              <h3>故障诊断</h3>
+              <p>N01009+Y 太阳翼帆板信号故障指示</p>
+              <h3>故障危害</h3>
+              <p>导致蓄电池过放电，任务失败</p>
+              <p>严重程度：严重</p>
+              <h3>处置建议</h3>
+              <p>1、 发K2“火工品母线通”</p>
+              <p>2、 发K1“火工品起爆”</p>
+              <p>若指令无效，向上级请示命令 <el-button type="danger" size="default" style="padding: .05rem">故障诊断报告</el-button></p>
+            </el-col>
+          </el-row>
         </div>
       </el-col>
       <el-col :span="10" class="timeBox">
@@ -13,29 +37,6 @@
           <p>{{ nowTime }}</p>
           <p>{{ sunTime }}</p>
         </div>
-      </el-col>
-      <el-col :span="7">
-        <div class="panel map" style="height: 5rem">
-          <h2>飞行器运行轨道实时显示</h2>
-          <div class="satell">
-            <img src="static/globe/satell.svg" alt="">
-          </div>
-          <v-chart
-            :options="globe"
-            autoresize
-            style="height: 100%;width:100%;position:relative;"
-          />
-        </div>
-      </el-col>
-    </el-row>
-    <el-row style="width: 100%" :gutter="20">
-      <el-col :span="7">
-        <div class="panel bar" style="height: 6.5rem">
-          <h2>实时遥测数据柱状图</h2>
-          <v-chart :options="barOption" autosize class="echartBox" />
-        </div>
-      </el-col>
-      <el-col :span="10">
         <div class="panel relationBox" style="overflow:hidden">
           <h2 style="float: none; clear: both">实时遥测数据曲线图</h2>
           <el-select v-model="value" placeholder="请选择" size="mini">
@@ -50,6 +51,17 @@
         </div>
       </el-col>
       <el-col :span="7">
+        <div class="panel map" style="height: 5rem">
+          <h2>飞行器运行轨道实时显示</h2>
+          <div class="satell">
+            <img src="static/globe/satell.svg" alt="">
+          </div>
+          <v-chart
+            :options="mapOption2"
+            autoresize
+            style="height: 100%;width:100%;position:relative;"
+          />
+        </div>
         <div class="panel line2" style="height: 6.5rem">
           <h2 style="float: none; clear: both">遥测数据实时知识图谱</h2>
           <v-chart :options="lineOption2" class="echartBox" />
@@ -71,8 +83,8 @@ import 'echarts-gl'
 // ECharts.registerMap('china', china)
 import chinaMap from './china.json'
 ECharts.registerMap('china', chinaMap)
-
-const colors = ['#8B78F6', '#286c81', '#56D0E3', '#8B78F6', '#247af5']
+import chinaOption from './data/map.js'
+const colors = ['#F57474', '#247af5', '#247af5', '#247af5', '#247af5']
 const parts = [{
   name: '帆板',
   children: ['轴温1', '轴温2', '主份电机电流1', '主份电机电流2', '备份电机电流1', '备份电机电流2', '壳体温度1', '壳体温度2']
@@ -87,7 +99,7 @@ const parts = [{
   children: ['计算A', '计算B', '计算C', '定姿计数器', 'X轴常漂估值', 'Y轴常漂估值', 'Z轴常漂估值', 'X轴指数漂移估值', 'Y轴指数漂移估值', 'Z轴指数漂移估值', '变量N_GyroFault', '变量N_Gyroi1Fault', '变量N_Gyroi2Fault']
 }, {
   name: '动量轮',
-  children: ['X电机电流遥测', 'Y电机电流遥测', 'Z电机电流遥测', 'S电机电流遥测', 'X轴承温度遥测', 'Y轴承温度遥测', 'Z轴承温度遥测', 'S轴承温度遥测', 'X标称角动量', 'Y标称角动量', 'Z标称角动量', 'S标称角动量', 'X轮剔野计数器', 'X轮诊断次数', 'Y轮剔野计数器', 'Y轮诊断次数']
+  children: ['X电机电流遥测1', 'Y电机电流遥测', 'Z电机电流遥测', 'S电机电流遥测', 'X轴承温度遥测', 'Y轴承温度遥测', 'Z轴承温度遥测', 'S轴承温度遥测', 'X标称角动量', 'Y标称角动量', 'Z标称角动量', 'S标称角动量', 'X轮剔野计数器', 'X轮诊断次数', 'Y轮剔野计数器', 'Y轮诊断次数']
 }]
 const getdata = function getData() {
   const data = {
@@ -127,7 +139,7 @@ const getdata = function getData() {
   // console.log(arr)
   return arr
 }
-var handle = function handleData(data, index, color = colors[4]) {
+var handle = function handleData(data, index, color = colors[0]) {
   // index标识第几层
   return data.map((item, index2) => {
     // 计算出颜色
@@ -179,7 +191,7 @@ export default {
     'v-chart': ECharts
   },
   data() {
-    const myColor = ['#247af5', '#F8B448', '#56D0E3', '#F57474', '#8B78F6']
+    const myColor = ['#247af5', '#F8B448', '#56D0E3', '#8B78F6', '#F57474']
     // function getCirlPoint(x0, y0, r, angle) {
     //   const x1 = x0 + r * Math.cos(angle * Math.PI / 180)
     //   const y1 = y0 + r * Math.sin(angle * Math.PI / 180)
@@ -188,18 +200,33 @@ export default {
     //     y: y1
     //   }
     // }实时遥测信号知识图谱   遥测信号实时数据曲线图
-
     return {
-      value: '信号一',
+      mapOption2: chinaOption,
+      value: '轴温',
       options: [{
-        value: '信号一',
-        label: '信号一'
+        value: '轴温1',
+        label: '轴温1'
       }, {
-        value: '信号二',
-        label: '信号二'
+        value: '轴温2',
+        label: '轴温2'
       }, {
-        value: '信号三',
-        label: '信号三'
+        value: '主份电机电流',
+        label: '主份电机电流'
+      }, {
+        value: '备份电机电流',
+        label: '备份电机电流'
+      }, {
+        value: '壳体温度',
+        label: '壳体温度'
+      }, {
+        value: 'G1马达电流遥测',
+        label: 'G1马达电流遥测'
+      }, {
+        value: 'G1温度遥测',
+        label: 'G1温度遥测'
+      }, {
+        value: 'G1电源状态遥测',
+        label: 'G1电源状态遥测'
       }],
       count: {
         total: 235411
@@ -209,17 +236,23 @@ export default {
         y: 0,
         z: 0
       },
-      globe: {
-        globe: {
-          globeRadius: 10,
-          baseTexture: '/static/globe/world.topo.bathy.200401.jpg',
-          displacementQuality: 'medium',
-          viewControl: {
-            autoRotateSpeed: 5,
-            targetCoord: [50, 0] // 北京坐标
-          }
-        }
-      },
+      part: [{
+        name: '太阳帆板',
+        pic: '/static/part/tyfb.png',
+        isErr: true
+      }, {
+        name: '磁力矩器',
+        pic: './static/part/cljq.png',
+        isErr: false
+      }, {
+        name: '动量轮',
+        pic: '/static/part/dll.png',
+        isErr: false
+      }, {
+        name: '光纤陀螺',
+        pic: '/static/part/gxtl.png',
+        isErr: false
+      }],
       barOption: {
         tooltip: {},
         visualMap: {
@@ -687,17 +720,6 @@ export default {
             saveAsImage: {}
           }
         },
-        visualMap: {
-          top: -100,
-          right: 10,
-          pieces: [{
-            gt: 426.64,
-            lte: 426.66,
-            color: '#cc0000'
-          }, {
-            lte: 398.34
-          }]
-        },
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -753,60 +775,64 @@ export default {
           }
         }],
         series: [{
-          name: '注册总量',
-          type: 'line',
-          smooth: true, // 是否平滑
-          showAllSymbol: true,
-          // symbol: 'image://./static/images/guang-circle.png',
-          symbol: 'circle',
-          symbolSize: 15,
-          lineStyle: {
-            normal: {
-              shadowColor: 'rgba(0, 0, 0, .6)',
-              shadowBlur: 0,
-              shadowOffsetY: 5,
-              shadowOffsetX: 5
-            }
-          },
-          label: {
-            show: true,
-            position: 'top'
-          },
-          itemStyle: {
-            borderColor: '#fff',
-            borderWidth: 3,
-            shadowColor: 'rgba(0, 0, 0, .6)',
-            shadowBlur: 0,
-            shadowOffsetY: 2,
-            shadowOffsetX: 2
-          },
-          tooltip: {
-            show: false
-          },
-          areaStyle: {
-            normal: {
-              color: new ECharts.graphic.LinearGradient(0, 0, 0, 1, [{
-                offset: 0,
-                color: 'rgba(0,179,244,0.3)'
-              },
-              {
-                offset: 1,
-                color: 'rgba(0,179,244,0)'
-              }], false),
-              shadowColor: 'rgba(0,179,244, 0.9)',
-              shadowBlur: 20
-            }
-          },
+          name: '轴温',
           markLine: {
             silent: true,
             data: [{
               yAxis: 390,
               lineStyle: {
-                color: '#F57474'
+                color: myColor[4]
               }
             }]
           },
-          data: [202.84, 205.97, 332.79, 281.55, 426.65, 214.02, 205.97, 332.79, 332.79, 281.55, 426.65, 214.02, 332.79, 281.55, 398.35, 214.02, 205.97, 332.79, 205.97, 281.55]
+          markPoint: {
+            data: [{
+              type: 'max',
+              itemStyle: {
+                color: myColor[4],
+                borderColor: '#fff'
+              },
+              label: {
+                fontWeight: 'bold'
+              },
+              symbolSize: [50, 50],
+              symbolOffset: [0, '-40%'],
+              symbol: 'circle',
+              name: '最大值'
+            }]
+          },
+          type: 'line',
+          data: [302.84, 305.97, 332.79, 381.55, 426.65, 314.02, 305.97, 332.79, 332.79, 381.55, 326.65, 314.02, 332.79, 381.55, 398.35, 314.02, 305.97, 332.79, 305.97, 381.55]
+        }, {
+          name: '主份点击电流',
+          type: 'line',
+          data: (() => {
+            const arr = []
+            for (let i = 0; i < 20; i++) {
+              arr.push(parseInt(((Math.random() * 30 + 200) * 100).toFixed(2)) / 100)
+            }
+            return arr
+          })()
+        }, {
+          name: '备份点击电流',
+          type: 'line',
+          data: (() => {
+            const arr = []
+            for (let i = 0; i < 20; i++) {
+              arr.push(parseInt(((Math.random() * 30 + 260) * 100).toFixed(2)) / 100)
+            }
+            return arr
+          })()
+        }, {
+          name: '壳体温度',
+          type: 'line',
+          data: (() => {
+            const arr = []
+            for (let i = 0; i < 20; i++) {
+              arr.push(parseInt(((Math.random() * 30 + 140) * 100).toFixed(2)) / 100)
+            }
+            return arr
+          })()
         }]
       }
     }
@@ -834,29 +860,36 @@ export default {
     width: 100%;
     position: relative;
     .satell{
-      position: absolute;
-      top: 25%;
-      left: 8%;
-      right: 8%;
-      bottom: 18%;
-      border: solid 1px #195BB9;
-      border-radius: 50%;
-      //向上走的动画初始及结尾值
-      @keyframes animX{
-          0% {left: -7%;}
-        100% {left: 95%;}
-      }
-      @keyframes animY{
-            0% {top: -50%;}
-          100% {top: 50%;}
-      }
       img {
-        width: 8%;
+        width: 6%;
         position: absolute;
-        top: 0;
-        left: 0;
-        animation: animX 4s cubic-bezier(0.36,0,0.64,1) -2s infinite alternate, animY 4s cubic-bezier(0.36,0,0.64,1)  0s infinite alternate;
+        top: 5%;
+        left: 35%;
+        z-index: 9;
       }
+    }
+  }
+  .panel.pie{
+    text-align: center;
+    color: #fff;
+    line-height: 1.9;
+    h3 {
+      font-size: .24rem;
+      color: #ffc000;
+      margin: .15rem 0 .05rem;
+    }
+    p{
+      font-size: .22rem;
+    }
+    .boxBg{
+      position: absolute;
+      top: 0;
+      left: .2rem;
+      right: .2rem;
+      bottom: 0;
+      border: solid 3px #F57474;
+      background: #F57474;
+      // animation: radius 1s ease-out infinite forwards alternate;
     }
   }
   .panel.relationBox {

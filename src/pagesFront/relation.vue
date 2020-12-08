@@ -14,7 +14,7 @@
     <el-col :span="12">
       <!-- 地图模块 -->
       <div class="panel map" style="height: 11.5rem">
-        <h2>遥测信号历史折线图</h2>
+        <h2>XX卫星剩余寿命预测</h2>
         <v-chart :options="option" style="height: 80%;" autoresize class="echartBox" />
       </div>
     </el-col>
@@ -221,7 +221,7 @@ export default {
             name: '校正速度Vy',
             type: 'line',
             smooth: true,
-            data: [0.7, 1, 0.8, 1, 0.7, 1, 0.8, 1, 0.7, 1, 0.8, 1]
+            data: [0.7, 1, 0.8, 1, 0.7, 1, 1, 1.28, 0.7, 1, 1.1, 1.3]
           },
           {
             name: '包络下限',
@@ -312,6 +312,22 @@ export default {
           type: 'line',
           animation: false,
           barWidth: 1,
+          markLine: {
+            silent: true,
+            data: [{
+              yAxis: 2000,
+              lineStyle: {
+                color: myColor[2],
+                type: 'solid'
+              }
+            }, {
+              yAxis: 1500,
+              lineStyle: {
+                color: myColor[4],
+                type: 'solid'
+              }
+            }]
+          },
           data: (() => {
             const result = []
             for (let i = 0; i < 3000; i++) {
@@ -341,10 +357,28 @@ export default {
           }
         },
         series: [{
+          markLine: {
+            silent: true,
+            data: [{
+              yAxis: 2100,
+              lineStyle: {
+                color: myColor[2],
+                type: 'solid'
+              }
+            }, {
+              yAxis: 1800,
+              lineStyle: {
+                color: myColor[4],
+                type: 'solid'
+              }
+            }]
+          },
           data: [820, 932, 901, 934, 1290, 1330, 1320, 1420, 1589, 1656, 1703, 1905],
           type: 'line',
+          color: myColor[0],
           smooth: true
         }, {
+          color: myColor[1],
           data: [820, 932, 901, 934, 1290, 1330, 1320, 1420, 1589, 1656, 1703, 1905],
           type: 'line'
         }]
@@ -407,47 +441,48 @@ export default {
         }]
       },
       option: {
+        color: myColor,
         tooltip: {
           trigger: 'axis',
-          axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+          axisPointer: {
+            lineStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [{
+                  offset: 0,
+                  color: 'rgba(0, 255, 233,0)'
+                }, {
+                  offset: 0.5,
+                  color: 'rgba(255, 255, 255,1)'
+                }, {
+                  offset: 1,
+                  color: 'rgba(0, 255, 233,0)'
+                }],
+                global: false
+              }
+            }
           }
         },
         grid: {
-          left: '0%',
-          right: '0%',
-          bottom: '8%',
-          containLabel: true
+          top: '15%',
+          left: '5%',
+          right: '5%',
+          bottom: '15%'
+          // containLabel: true
         },
-        xAxis: {
-          name: '(ms)',
+        xAxis: [{
           type: 'category',
-          boundaryGap: false,
           axisLabel: {
-            color: 'rgba(255, 255, 255,.6)'
-          },
-          axisLine: {
-            lineStyle: {
-              color: 'rgba(255, 255, 255,.5)',
-              width: 2,
-              type: 'solid'
-            }
-          },
-          data: this.$store.state.first.basicData.healthy.time
-        },
-        yAxis: {
-          name: '健康值',
-          // maxInterval: 20,
-          type: 'value',
-          min: 85,
-          max: 110,
-          axisLabel: {
-            color: 'rgba(255, 255, 255,.6)',
+            color: 'rgba(255,255,255,.8)',
             fontSize: '12'
           },
           axisLine: {
             lineStyle: {
-              color: 'rgba(255, 255, 255, .5)',
+              color: 'rgba(255,255,255,.8)',
               width: 2,
               type: 'solid'
             }
@@ -455,40 +490,96 @@ export default {
           // y轴分割线
           splitLine: {
             lineStyle: {
-              color: 'rgba(255, 255, 255,.1)'
+              color: 'rgba(255,255,255,.8)'
+            }
+          },
+          boundaryGap: false,
+          data: ['11-01', '11-02', '11-03', '11-04', '11-05', '11-06', '11-07', '11-08', '11-09', '11-10', '11-11', '11-12', '11-13']
+        }],
+        yAxis: [{
+          type: 'value',
+          min: 0,
+          // max: 140,
+          splitNumber: 4,
+          axisLabel: {
+            color: 'rgba(255,255,255,.8)',
+            fontSize: '12'
+          },
+          axisLine: {
+            lineStyle: {
+              color: 'rgba(255,255,255,.8)',
+              width: 2,
+              type: 'solid'
+            }
+          },
+          // y轴分割线
+          splitLine: {
+            lineStyle: {
+              color: 'rgba(255,255,255,.8)'
             }
           }
-        },
+        }],
         series: [{
-          name: '矫正速度Vx',
-          data: [94.2, 95.3, 98.3, 94.3, 93.5, 94.8, 97.3, 99.6, 94.6, 96.8, 99.1, 95.4, 95.7, 93.5, 94.8, 97.3, 99.6, 94.6, 96.8, 97.2],
           type: 'line',
-          markPoint: {
-            data: [
-              { type: 'max', name: '最大值' },
-              { type: 'min', name: '最小值' }
-            ]
+          smooth: true, // 是否平滑
+          showAllSymbol: true,
+          // symbol: 'image://./static/images/guang-circle.png',
+          symbol: 'circle',
+          symbolSize: 15,
+          markLine: {
+            silent: true,
+            data: [{
+              yAxis: 300,
+              lineStyle: {
+                color: myColor[2],
+                type: 'solid'
+              }
+            }, {
+              yAxis: 400,
+              lineStyle: {
+                color: myColor[4],
+                type: 'solid'
+              }
+            }]
+          },
+          lineStyle: {
+            normal: {
+              shadowColor: 'rgba(0, 0, 0, .6)',
+              shadowBlur: 0,
+              shadowOffsetY: 5,
+              shadowOffsetX: 5
+            }
+          },
+          label: {
+            show: true,
+            position: 'top'
           },
           itemStyle: {
-            normal: {
-              color: myColor[0] // 改变折线点的颜色
-            }
-          }
-        }, {
-          name: '矫正速度Vy',
-          data: [96.8, 99.1, 95.4, 94.2, 95.9, 93.8, 94.8, 97.3, 99.2, 94.6, 96.8, 97.2, 98.3, 94.3, 93.7, 94.8, 97.3, 99.3, 94.6, 95.7],
-          type: 'line',
-          markPoint: {
-            data: [
-              { type: 'max', name: '最大值' },
-              { type: 'min', name: '最小值' }
-            ]
+            borderColor: '#fff',
+            borderWidth: 3,
+            shadowColor: 'rgba(0, 0, 0, .6)',
+            shadowBlur: 0,
+            shadowOffsetY: 2,
+            shadowOffsetX: 2
           },
-          itemStyle: {
+          tooltip: {
+            show: false
+          },
+          areaStyle: {
             normal: {
-              color: myColor[2] // 改变折线点的颜色
+              color: new ECharts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(0,179,244,0.3)'
+              },
+              {
+                offset: 1,
+                color: 'rgba(0,179,244,0)'
+              }], false),
+              shadowColor: 'rgba(0,179,244, 0.9)',
+              shadowBlur: 20
             }
-          }
+          },
+          data: [502.84, 492.84, 482.84, 472.84, 462.84, 452.84, 442.84, 432.84, 422.84, 412.84, 402.84, 392.84, 382.84, 372.84, 362.84, 352.84, 342.84, 332.84, 502.84, 502.84, 502.84, 502.84, 502.84]
         }]
       }
     }
@@ -506,7 +597,6 @@ export default {
   .panel{
     height: 5.6rem;
   }
-  .panel.map{}
 }
 .el-table.tableData {
   background: none;
