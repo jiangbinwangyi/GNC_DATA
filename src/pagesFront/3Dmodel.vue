@@ -22,12 +22,16 @@
       </div>
     </el-col>
     <el-col :span="8">
-      <div class="panel map" style="height: 2.752rem">
+      <div class="panel map" style="height: 1.78rem">
+        <h2>故障时间</h2>
+        <p class="info">2020-12-31 17:30:00.000</p>
+      </div>
+      <div class="panel map" style="height: 1.78rem">
         <v-chart :options="option" autoresize class="echartBox" style="display: none" />
         <h2>故障模式</h2>
         <p class="info">星箭分离66s左右，双太阳翼未展开</p>
       </div>
-      <div class="panel map" style="height: 2.752rem">
+      <div class="panel map" style="height: 1.78rem">
         <v-chart :options="option" autoresize class="echartBox" style="display: none" />
         <h2>故障判断</h2>
         <p class="info">N01009+Y 太阳翼帆板信号故障指示</p>

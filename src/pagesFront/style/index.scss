@@ -8,7 +8,7 @@
   src: url(../assets/front/font/DS-DIGIT.TTF);
 }
 .myselfData {
-  background: url(../assets/front/images/bg.jpg) no-repeat top center;
+  background: #000 no-repeat top center;
   background-size: 100% 100%;
   font-size: 0;
   line-height: 0;
@@ -67,7 +67,8 @@ header {
     margin-bottom: 0.1875rem;
     border: solid 1px #080b30;
     box-shadow: 0 0 30px 0 rgba(8, 11, 48, 0.7) inset;
-    background: rgba(8, 11, 48, 0.4);
+    // background: rgba(8, 11, 48, 0.4);
+    background: #000;
     &::before {
       position: absolute;
       top: 0;
@@ -77,8 +78,10 @@ header {
       border-top: 2px solid #02a6b5;
       border-left: 2px solid #02a6b5;
       content: "";
+      display: none;
     }
     &::after {
+      display: none;
       position: absolute;
       top: 0;
       right: 0;
