@@ -2,7 +2,7 @@
   <div class="myselfData">
     <header>
       <div class="showTime" v-text="nowTime" />
-      <h1>XX号卫星遥测数据分析 -
+      <h1>XX号飞行器遥测数据分析 -
         <el-dropdown @command="setMenuActive">
           <span class="el-dropdown-link">
             <a href="javascript:void(0);" style="font-size: 28px; color:#fff">{{ menuActive }}</a>

@@ -1,11 +1,11 @@
 <template>
   <!-- 页面主体 -->
-  <el-row style="width: 100%" :gutter="20">
+  <el-row style="width: 100%" :gutter="20" class="modelBox">
     <el-col :span="2">
       <div class="partBox">
         <div class="panel" style="height: 11.6rem;">
           <el-row>
-            <div v-for="(item, index) in part" :key="index" style="position:relative; padding: .2rem; height: 1.6rem">
+            <div v-for="(item, index) in part" :key="index" style="position:relative; padding: .2rem; height: 1.6rem" @click="model='bujian'">
               <div v-if="item.isErr" class="boxBg" />
               <p style="position: relative; z-index: 9">{{ item.name }}</p>
               <img v-show="item.pic" :src="item.pic" alt="帆板" style="height: calc(100% - 25px);position: relative; z-index: 10">
@@ -17,37 +17,70 @@
     <el-col :span="14">
       <!-- 地图模块 -->
       <div class="panel map" style="height: 11.6rem; text-align: center">
-        <model-obj src="/static/3d/file.obj" mtl="/static/3d/file.mtl" :rotation="rotation" :scale="{ x: 1.6, y: 1.6, z: 1.6 }" :background-alpha="0" style="height: 90%" @on-load="modelOnLoad" />
-        <el-button type="danger" style="transform: scale(2)">生成故障诊断报告</el-button>
+        <div style="text-align: right; margin-bottom: .2rem">
+          <el-button size="mini" type="danger">BD2G01</el-button>
+          <el-button size="mini" type="primary">BD2G02</el-button>
+          <el-button size="mini" type="primary">BD2G03</el-button>
+          <el-button size="mini" type="primary">BD2G04</el-button>
+          <el-button size="mini" type="primary">BD2G05</el-button>
+          <el-button size="mini" type="primary">BD2G06</el-button>
+        </div>
+        <div v-if="model === '3d'" style="height: 100%">
+          <model-obj src="/static/3d/file.obj" mtl="/static/3d/file.mtl" :rotation="rotation" :scale="{ x: 1.6, y: 1.6, z: 1.6 }" :background-alpha="0" style="height: 90%" @on-load="modelOnLoad" />
+          <el-button type="danger" style="transform: scale(1.4)">生成故障诊断报告</el-button>
+        </div>
+        <div v-else-if="model === 'zhishi'">
+          <img src="@/assets/images/zhishi.png" style="width: 90%; height: auto">
+          <el-button type="primary" @click="model='3d'">返回3D模型</el-button>
+        </div>
+        <div v-else-if="model = 'bujian'">
+          <img src="@/assets/images/bujian.png" style="width: 100%; height: 100%">
+          <el-button type="primary" @click="model='3d'">返回3D模型</el-button>
+      </div>
       </div>
     </el-col>
     <el-col :span="8">
-      <div class="panel map" style="height: 1.78rem">
-        <h2>故障时间</h2>
-        <p class="info">2020-12-31 17:30:00.000</p>
-      </div>
-      <div class="panel map" style="height: 1.78rem">
-        <v-chart :options="option" autoresize class="echartBox" style="display: none" />
-        <h2>故障模式</h2>
-        <p class="info">星箭分离66s左右，双太阳翼未展开</p>
-      </div>
-      <div class="panel map" style="height: 1.78rem">
-        <v-chart :options="option" autoresize class="echartBox" style="display: none" />
-        <h2>故障判断</h2>
-        <p class="info">N01009+Y 太阳翼帆板信号故障指示</p>
-      </div>
-      <div class="panel map" style="height: 2.752rem">
-        <v-chart :options="option" autoresize class="echartBox" style="display: none" />
-        <h2>故障危害</h2>
-        <p class="info">太阳翼帆板未展开，会导致蓄电池过放电，任务可能失败。</p>
-        <p class="info">严重程度：严重</p>
-      </div>
-      <div class="panel map" style="height: 2.752rem">
-        <v-chart :options="option" autoresize class="echartBox" style="display: none" />
-        <h2>处置建议</h2>
-        <p class="info">1、 发K2“火工品母线通”</p>
-        <p class="info">2、 发K1“火工品起爆”</p>
-        <p class="info">若指令无效，向上级请示命令</p>
+      <el-row :gutter="10">
+        <el-col :span="12">
+          <div class="panel map" style="height: 1.3rem">
+            <h2>故障时间</h2>
+            <p class="info">2020-12-31 17:30:00.000</p>
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="panel map" style="height: 1.3rem">
+            <v-chart :options="option" autoresize class="echartBox" style="display: none" />
+            <h2>故障模式</h2>
+            <p class="info">星箭分离66s左右，双太阳翼未展开</p>
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="panel map" style="height: 1.3rem">
+            <v-chart :options="option" autoresize class="echartBox" style="display: none" />
+            <h2>故障判断</h2>
+            <p class="info">N01009+Y 太阳翼帆板信号故障指示</p>
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="panel map" style="height: 1.3rem">
+            <v-chart :options="option" autoresize class="echartBox" style="display: none" />
+            <h2>故障危害</h2>
+            <p class="info">太阳翼帆板未展开，会导致蓄电池过放电，任务可能失败。</p>
+            <p class="info">严重程度：严重</p>
+          </div>
+        </el-col>
+        <el-col :span="24">
+          <div class="panel map" style="height: 2rem">
+            <v-chart :options="option" autoresize class="echartBox" style="display: none" />
+            <h2>处置建议</h2>
+            <p class="info">1、 发K2“火工品母线通” 2、 发K1“火工品起爆”</p>
+            <p class="info">若指令无效，向上级请示命令</p>
+          </div>
+        </el-col>
+      </el-row>
+      <div class="panel map" style="height: 6.4rem">
+        <h2>知识图谱</h2>
+        <img src="@/assets/images/zhishi.png" style="width: 100%; height: auto; padding-top: .5rem" @dblclick="model = 'zhishi'">
       </div>
     </el-col>
   </el-row>
@@ -183,6 +216,7 @@ export default {
       color: '#ccc'
     }
     return {
+      model: '3d',
       option: {
         title: {
           text: '各零部件信号故障关系推断',
@@ -503,6 +537,9 @@ export default {
 
 <style lang="scss">
 @import 'style/index.scss';
+.mainbox .modelBox  .panel h2{
+  font-size: 0.22rem;
+}
 .partBox{
   width: 100%;
   display: inline-block;

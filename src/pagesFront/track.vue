@@ -60,7 +60,7 @@
     </el-col>
     <el-col :span="24">
       <div class="panel line">
-        <h2>XX卫星剩余寿命预测</h2>
+        <h2>XX飞行器剩余寿命预测</h2>
         <v-chart
           :options="mapOption2"
           autoresize

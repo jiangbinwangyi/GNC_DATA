@@ -7,7 +7,7 @@ const state = {
     name: '实时数据'
   }, {
     src: '/3Dmodel',
-    name: '实时诊断'
+    name: '故障诊断'
   }, {
     src: '/track',
     name: '实时预测'

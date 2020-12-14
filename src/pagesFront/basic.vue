@@ -1,22 +1,60 @@
 <template>
   <!-- 页面主体 -->
-  <div style="width: 100%">
+  <div class="basicBox" style="width: 100%">
     <el-row style="width: 100%" :gutter="20">
       <el-col :span="7">
         <div class="panel pie" style="height: 5rem">
           <h2>飞行器实时动作显示</h2>
-          <model-obj src="/static/3d/file.obj" mtl="/static/3d/file.mtl" :rotation="rotation" :scale="{ x: 1.6, y: 1.6, z: 1.6 }" :background-alpha="0" @on-load="modelOnLoad" />
+          <div style="text-align: center; padding-top: 10px">
+            <el-button size="mini" type="danger">BD2G01</el-button>
+            <el-button size="mini" type="primary">BD2G02</el-button>
+            <el-button size="mini" type="primary">BD2G03</el-button>
+            <el-button size="mini" type="primary">BD2G04</el-button>
+            <el-button size="mini" type="primary">BD2G05</el-button>
+            <el-button size="mini" type="primary">BD2G06</el-button>
+          </div>
+          <el-row>
+            <el-col :span="6" style="height: 100%;">
+              <el-row :gutter="10" class="partBox">
+                <el-col v-for="(item, index) in part" :key="index" :span="12" style="position:relative; margin-top: .1rem; padding: .05rem 0; border:solid 1px #333; min-height: .84rem">
+                  <div v-if="item.isErr" class="boxBg" />
+                  <p style="position: relative; z-index: 9">{{ item.name }}</p>
+                  <img v-show="item.pic" :src="item.pic" alt="帆板" style="position: relative; z-index: 10;" @click="visibleShow = index === 0">
+                </el-col>
+              </el-row>
+            </el-col>
+            <el-col :span="18" style="padding-top: 1rem">
+              <model-obj src="/static/3d/file.obj" mtl="/static/3d/file.mtl" :rotation="rotation" :scale="{ x: 1.6, y: 1.6, z: 1.6 }" :background-alpha="0" @on-load="modelOnLoad" />
+            </el-col>
+          </el-row>
         </div>
       </el-col>
       <el-col :span="10" class="timeBox">
-        <div class="panel" style="height: 5rem">
-          <p>{{ nowTime }}</p>
-          <p>{{ sunTime }}</p>
+        <div class="panel pie" style="height: 5rem; text-align: center">
+          <h2>飞行器星下点轨迹</h2>
+          <div style="text-align: center; padding-top: 10px; line-height: 0">
+            <el-button size="mini" type="danger">BD2G01</el-button>
+            <el-button size="mini" type="primary">BD2G02</el-button>
+            <el-button size="mini" type="primary">BD2G03</el-button>
+            <el-button size="mini" type="primary">BD2G04</el-button>
+            <el-button size="mini" type="primary">BD2G05</el-button>
+            <el-button size="mini" type="primary">BD2G06</el-button>
+          </div>
+          <img src="@/assets/images/guiji.png" style="width: 100%; height: auto; padding-top: 20px">
         </div>
       </el-col>
       <el-col :span="7">
         <div class="panel map" style="height: 5rem">
           <h2>飞行器运行轨道实时显示</h2>
+          <div style="text-align: center; padding-top: 10px">
+            <el-button size="mini" type="danger">BD2G01</el-button>
+            <el-button size="mini" type="primary">BD2G02</el-button>
+            <el-button size="mini" type="primary">BD2G03</el-button>
+            <el-button size="mini" type="primary">BD2G04</el-button>
+            <el-button size="mini" type="primary">BD2G05</el-button>
+            <el-button size="mini" type="primary">BD2G06</el-button>
+          </div>
+          <div class="satell" style="top: 26%; bottom: 17%; border-color: #666;" />
           <div class="satell">
             <img src="static/globe/satell.svg" alt="">
           </div>
@@ -31,31 +69,102 @@
     <el-row style="width: 100%" :gutter="20">
       <el-col :span="7">
         <div class="panel bar" style="height: 6.5rem">
-          <h2>实时遥测数据柱状图</h2>
-          <v-chart :options="barOption" autosize class="echartBox" />
+          <h2>飞行器实时健康状态</h2>
+          <el-row class="xinhao">
+            <el-col :span="8">
+              <div>
+                <img src="@/assets/images/xinhao_red.png" alt="" class="xinhao_error">
+                <img src="@/assets/images/xinhao_gray.png" alt="">
+                <img src="@/assets/images/xinhao_gray.png" alt="">
+                <img src="@/assets/images/xinhao_gray.png" alt="">
+                <img src="@/assets/images/xinhao_gray.png" alt="">
+              </div>
+              <p>BD2G01</p>
+            </el-col>
+            <el-col v-for="item in 11" :key="item" :span="8">
+              <div>
+                <img src="@/assets/images/xinhao_gray.png" alt="">
+                <img src="@/assets/images/xinhao_gray.png" alt="">
+                <img src="@/assets/images/xinhao_gray.png" alt="">
+                <img src="@/assets/images/xinhao_gray.png" alt="">
+                <img src="@/assets/images/xinhao_green.png" alt="">
+              </div>
+              <p>BD2G0{{ item + 1 }}</p>
+            </el-col>
+          </el-row>
+          <audio src="@/assets/xinhao2.mp3" autoplay="autoplay" loop="loop" />
         </div>
       </el-col>
       <el-col :span="10">
         <div class="panel relationBox" style="overflow:hidden">
-          <h2 style="float: none; clear: both">实时遥测数据曲线图</h2>
-          <el-select v-model="value" placeholder="请选择" size="mini">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+          <h2 style="float: none; clear: both">飞行器实时运行信息</h2>
+          <el-table :data="tableData" :row-class-name="isError">
+            <el-table-column
+              prop="name"
+              label="飞行器"
+              width="90"
             />
-          </el-select>
-          <v-chart :options="mapOption" class="echartBox mapChart" />
+            <el-table-column
+              prop="time"
+              label="时间"
+              width="190"
+            />
+            <el-table-column
+              prop="info"
+              label="信息"
+              min-width="180"
+            />
+          </el-table>
         </div>
       </el-col>
       <el-col :span="7">
         <div class="panel line2" style="height: 6.5rem">
-          <h2 style="float: none; clear: both">遥测数据实时知识图谱</h2>
-          <v-chart :options="lineOption2" class="echartBox" />
+          <h2 style="float: none; clear: both">飞行器实时运行影像</h2>
+          <img src="@/assets/images/video.png" style="width: 100%; height: auto; padding-top: 20px">
         </div>
       </el-col>
     </el-row>
+
+    <el-dialog
+      title="BD2G01 - 飞行器帆板实时信息"
+      :visible.sync="visibleShow"
+      width="70%"
+    >
+      <div>
+        <el-row style="line-height: 1.8; margin-bottom: .5rem">
+          <el-col :span="12" class="xinhao">
+            <h3>部件实时状态</h3>
+            <img src="@/assets/images/xinhao_red.png" alt="" class="xinhao_error">
+            <img src="@/assets/images/xinhao_gray.png" alt="">
+            <img src="@/assets/images/xinhao_gray.png" alt="">
+            <img src="@/assets/images/xinhao_gray.png" alt="">
+            <img src="@/assets/images/xinhao_gray.png" alt="">
+          </el-col>
+          <el-col :span="12">
+            <h3>部件信息</h3>
+            <p style="color: #cc0000">时间：2020-01-02 06:30:32 信息：状态 +y帆板工作信号 &nbsp; 0“状态异常”。</p>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <h3>运行状态分析</h3>
+            <v-chart
+              :options="radarOption"
+              autoresize
+              style="height: 5rem;width:100%;position:relative;"
+            />
+          </el-col>
+          <el-col :span="12">
+            <h3>实时数据检测</h3>
+            <v-chart
+              :options="mapOption"
+              autoresize
+              style="height: 5rem;width:100%;position:relative;"
+            />
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -190,6 +299,69 @@ export default {
     // }实时遥测信号知识图谱   遥测信号实时数据曲线图
 
     return {
+      visibleShow: false,
+      part: [{
+        name: '太阳帆板',
+        pic: '/static/part/tyfb.png',
+        isErr: true
+      }, {
+        name: '磁力矩器',
+        pic: './static/part/cljq.png',
+        isErr: false
+      }, {
+        name: '动量轮',
+        pic: '/static/part/dll.png',
+        isErr: false
+      }, {
+        name: '光纤陀螺',
+        pic: '/static/part/gxtl.png',
+        isErr: false
+      }, {
+        name: '发动机',
+        pic: '/static/part/fdj.png',
+        isErr: false
+      }, {
+        name: '太敏',
+        pic: '/static/part/tymgq.png',
+        isErr: false
+      }, {
+        name: '星敏感器',
+        pic: '/static/part/xmgq.png',
+        isErr: false
+      }, {
+        name: '',
+        pic: '',
+        isErr: false
+      }],
+      tableData: [{
+        name: 'BD2G01',
+        time: '2020-01-02  06:30:32',
+        info: '状态 +y帆板工作信号<0“状态异常”。'
+      }, {
+        name: 'BD2G02',
+        time: '2020-01-02  06:30:36',
+        info: '+y帆板工作方式跳变为“复位保持”。'
+      }, {
+        name: 'BD2G03',
+        time: '2020-01-02  06:30:40',
+        info: '增强天线架构反射器展开驱动装置#温度高于上限'
+      }, {
+        name: 'BD2G04',
+        time: '2020-01-02  06:30:44',
+        info: 'SADA数据-Y-SADM转动方向为正转'
+      }, {
+        name: 'BD2G05',
+        time: '2020-01-02  06:30:48',
+        info: 'SADA数据+Y-SADM转动方向为正转'
+      }, {
+        name: 'BD2G06',
+        time: '2020-01-02  06:30:52',
+        info: 'SADM转动方向为反转'
+      }, {
+        name: 'BD2G07',
+        time: '2020-01-02  06:30:54',
+        info: '监视相机A电源（VMA9）关机！'
+      }],
       value: '信号一',
       options: [{
         value: '信号一',
@@ -211,14 +383,45 @@ export default {
       },
       globe: {
         globe: {
-          globeRadius: 10,
+          globeRadius: 18,
           baseTexture: '/static/globe/world.topo.bathy.200401.jpg',
           displacementQuality: 'medium',
           viewControl: {
-            autoRotateSpeed: 5,
+            autoRotateSpeed: 8,
             targetCoord: [50, 0] // 北京坐标
           }
         }
+      },
+      radarOption: {
+        radar: {
+          // shape: 'circle',
+          name: {
+            textStyle: {
+              color: '#fff',
+              backgroundColor: '#999',
+              borderRadius: 3,
+              padding: [3, 5]
+            }
+          },
+          indicator: [
+            { name: '+Y展开', max: 1 },
+            { name: '-Y展开', max: 1 },
+            { name: '方阵电流', max: 1 },
+            { name: '母线电压', max: 1 },
+            { name: '起爆状态', max: 1 }
+          ]
+        },
+        series: [{
+          name: '预算 vs 开销（Budget vs spending）',
+          type: 'radar',
+          // areaStyle: {normal: {}},
+          data: [
+            {
+              value: [0, 1, 1, 1, 1],
+              name: '预算分配（Allocated Budget）'
+            }
+          ]
+        }]
       },
       barOption: {
         tooltip: {},
@@ -691,11 +894,11 @@ export default {
           top: -100,
           right: 10,
           pieces: [{
-            gt: 426.64,
-            lte: 426.66,
+            gt: 24.11,
+            lte: 24.15,
             color: '#cc0000'
           }, {
-            lte: 398.34
+            lte: 23.3
           }]
         },
         tooltip: {
@@ -739,17 +942,17 @@ export default {
             show: false
           },
           axisLabel: {
-            color: '#fff'
+            color: '#000'
           },
           boundaryGap: false,
           data: ['11-01', '11-02', '11-03', '11-04', '11-05', '11-06', '11-07', '11-08', '11-09', '11-10', '11-11', '11-12', '11-13']
         }],
         yAxis: [{
           type: 'value',
-          min: 100,
-          max: 600,
+          min: 0,
+          max: 30,
           axisLabel: {
-            color: '#fff'
+            color: '#000'
           }
         }],
         series: [{
@@ -773,7 +976,7 @@ export default {
             position: 'top'
           },
           itemStyle: {
-            borderColor: '#fff',
+            borderColor: '#ccc',
             borderWidth: 3,
             shadowColor: 'rgba(0, 0, 0, .6)',
             shadowBlur: 0,
@@ -800,13 +1003,13 @@ export default {
           markLine: {
             silent: true,
             data: [{
-              yAxis: 390,
+              yAxis: 23,
               lineStyle: {
                 color: '#F57474'
               }
             }]
           },
-          data: [202.84, 205.97, 332.79, 281.55, 426.65, 214.02, 205.97, 332.79, 332.79, 281.55, 426.65, 214.02, 332.79, 281.55, 398.35, 214.02, 205.97, 332.79, 205.97, 281.55]
+          data: [22.43, 22.64, 22.42, 22.44, 22.63, 22.57, 22.64, 22.78, 22.13, 22.68, 24.12, 22.78, 22.54, 22.35]
         }]
       }
     }
@@ -815,6 +1018,14 @@ export default {
     ...mapState('first', ['basicData', 'nowTime', 'sunTime'])
   },
   methods: {
+    isError({ row, rowIndex }) {
+      console.log(rowIndex)
+      if (rowIndex === 0) {
+        return 'table_error'
+      } else if (rowIndex === 3) {
+        return 'table_warning'
+      }
+    },
     modelOnLoad() {
       this.rotate()
     },
@@ -826,75 +1037,154 @@ export default {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang='scss'>
 @import 'style/index.scss';
 
+.el-table, .el-table tr, .el-table th, .el-table td{
+  background: none;
+  color: #fff;
+  font-size: 18px;
+  padding: .2rem 0;
+  &.table_error td{
+    color: #cc0000;
+  }
+  &.table_warning td{
+    color: #cccc00
+  }
+}
+.el-table--enable-row-hover .el-table__body tr:hover > td{
+  background: none;
+}
 .mainbox {
-  .panel.map {
-    width: 100%;
-    position: relative;
-    .satell{
-      position: absolute;
-      top: 25%;
-      left: 8%;
-      right: 8%;
-      bottom: 18%;
-      border: solid 1px #195BB9;
-      border-radius: 50%;
-      //向上走的动画初始及结尾值
-      @keyframes animX{
-          0% {left: -7%;}
-        100% {left: 95%;}
+  .basicBox{
+    .xinhao div {
+      padding-top: .3rem;
+    }
+    .xinhao p{
+      font-size: .22rem;
+      color: #fff;
+      text-align: center;
+      line-height: 1;
+      padding-top: .15rem;
+    }
+    .xinhao img{
+      width: 24px;
+      height: 24px;
+      margin: 0 3px;
+    }
+    @keyframes error {
+      0% {
+        opacity: .5;
       }
-      @keyframes animY{
-            0% {top: -50%;}
-          100% {top: 50%;}
+      100% {
+        opacity: 1;
       }
+    }
+    .xinhao_error{
+      animation: error .2s ease-in-out infinite alternate;
+    }
+    .el-button {
+      padding: 2px;
+    }
+    .panel.map {
+      width: 100%;
+      position: relative;
+      .satell{
+        position: absolute;
+        top: 29%;
+        left: 8%;
+        right: 8%;
+        bottom: 14%;
+        border: solid 1px #5098ff;
+        border-radius: 50%;
+        //向上走的动画初始及结尾值
+        @keyframes animX{
+            0% {left: -7%;}
+          100% {left: 95%;}
+        }
+        @keyframes animY{
+          0% {top: -50%;}
+            100% {top: 50%;}
+        }
+        img {
+          width: 8%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          animation: animX 4s cubic-bezier(0.36,0,0.64,1) -2s infinite alternate, animY 4s cubic-bezier(0.36,0,0.64,1)  0s infinite alternate;
+        }
+      }
+    }
+    .panel.relationBox {
+      width: 100%;
+      height: 6.5rem;
+      position: relative;
+      .mapBorder{
+        position: absolute;
+        top: 19%;
+        left: 10%;
+        right: 10%;
+        bottom: 19%;
+        border-top: solid 1px #195BB9;
+        border-bottom: solid 1px #195BB9;
+      }
+    }
+    .mapChart{
+      border: none;
+      margin-top: 0rem;
+    }
+    .el-select{
+      float: right;
+      position: relative;
+      z-index: 10;
+      opacity: .8;
+      margin: -.52rem .5rem 0 0;
+    }
+    .timeBox{
+      font-size: .47rem;
+      height: 3.67rem;
+      line-height: 1;
+      color: #247af5;
+      p {
+        text-shadow: 1px 1px rgba($color: #000, $alpha: .5);
+        padding-top: 0.8rem;
+        font-weight: bold;
+        text-align: center;
+      }
+    }
+    .partBox{
+      width: 100%;
+      display: inline-block;
+      vertical-align: top;
+      text-align: center;
       img {
-        width: 8%;
+        width: 50%;
+        height: auto
+      }
+      p {
+        text-align: center;
+        font-size: 10px;
+        color: #fff;
+        line-height: 1;
+        margin-bottom: 10px;
+      }
+      .boxBg{
         position: absolute;
         top: 0;
         left: 0;
-        animation: animX 4s cubic-bezier(0.36,0,0.64,1) -2s infinite alternate, animY 4s cubic-bezier(0.36,0,0.64,1)  0s infinite alternate;
+        right: 0;
+        bottom: 0;
+        border: solid 3px #F57474;
+        background: #F57474;
+        // animation: radius 1s ease-out infinite forwards alternate;
       }
     }
   }
-  .panel.relationBox {
-    width: 100%;
-    height: 6.5rem;
-    position: relative;
-    .mapBorder{
-      position: absolute;
-      top: 19%;
-      left: 10%;
-      right: 10%;
-      bottom: 19%;
-      border-top: solid 1px #195BB9;
-      border-bottom: solid 1px #195BB9;
-    }
-  }
-  .mapChart{
-    border: none;
-    margin-top: 0rem;
-  }
-  .el-select{
-    float: right;
-    position: relative;
-    z-index: 10;
-    opacity: .8;
-    margin: -.52rem .5rem 0 0;
-  }
-  .timeBox{
-    font-size: .47rem;
-    height: 3.67rem;
-    line-height: 1;
-    color: #247af5;
-    p {
-      text-shadow: 1px 1px rgba($color: #000, $alpha: .5);
-      padding-top: 0.8rem;
-      font-weight: bold;
-      text-align: center;
-    }
+}
+.el-dialog{
+  background:#061940;
+  .el-dialog__title, h3{
+    color: #fff;
   }
 }
 </style>
