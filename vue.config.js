@@ -81,6 +81,13 @@ module.exports = {
           '^/prod-api/': ''
         }
       },
+      '/dev-api/dataAnalysis/': {
+        target: 'http://172.16.1.3:8000/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/dev-api/dataAnalysis/': ''
+        }
+      },
       '/dev-api/api/': {
         target: 'http://172.16.1.100:8080/',
         changeOrigin: true,

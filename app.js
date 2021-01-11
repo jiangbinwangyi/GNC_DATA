@@ -63,18 +63,18 @@ const server = app.listen(3002, () => {
   console.log('Koa is listening in 3002')
 })
 
-const WebSocket = require('ws')
-const wss = new WebSocket.Server({ server })
-wss.on('connection', ws => {
-  console.log('New connection')
-  ws.on('message', msg => {
-    console.log('server receive msg:', msg)
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(msg)
-      }
-    })
-  })
-})
+// const WebSocket = require('ws')
+// const wss = new WebSocket.Server({ server })
+// wss.on('connection', ws => {
+//   console.log('New connection')
+//   ws.on('message', msg => {
+//     console.log('server receive msg:', msg)
+//     wss.clients.forEach(function each(client) {
+//       if (client.readyState === WebSocket.OPEN) {
+//         client.send(msg)
+//       }
+//     })
+//   })
+// })
 
 module.exports = app

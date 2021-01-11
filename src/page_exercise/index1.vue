@@ -105,7 +105,7 @@ export default {
       }
     ]
 
-    const myColor = ['#247af5', '#F57474', '#56D0E3', '#F8B448', '#8B78F6']
+    const myColor = ['#247af5', '#F57474', '#56D0E3', '#F8B448', '#83f574']
 
     return {
       nowTime: '',

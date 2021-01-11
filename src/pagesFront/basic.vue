@@ -17,14 +17,14 @@
             <el-col :span="6" style="height: 100%;">
               <el-row :gutter="10" class="partBox">
                 <el-col v-for="(item, index) in part" :key="index" :span="12" style="position:relative; margin-top: .1rem; padding: .05rem 0; border:solid 1px #333; min-height: .84rem">
-                  <div v-if="item.isErr" class="boxBg" />
+                  <div v-if="item.isErr && failStatus" class="boxBg" />
                   <p style="position: relative; z-index: 9">{{ item.name }}</p>
                   <img v-show="item.pic" :src="item.pic" alt="帆板" style="position: relative; z-index: 10;" @click="visibleShow = index === 0">
                 </el-col>
               </el-row>
             </el-col>
             <el-col :span="18" style="padding-top: 1rem">
-              <model-obj src="/static/3d/file.obj" mtl="/static/3d/file.mtl" :rotation="rotation" :scale="{ x: 1.6, y: 1.6, z: 1.6 }" :background-alpha="0" @on-load="modelOnLoad" />
+              <model-obj src="/static/3d/file12.obj" mtl="/static/3d/file12.mtl" :rotation="rotation" :scale="{ x: 1.6, y: 1.6, z: 1.6 }" :background-alpha="0" @on-load="modelOnLoad" />
             </el-col>
           </el-row>
         </div>
@@ -40,7 +40,10 @@
             <el-button size="mini" type="primary">BD2G05</el-button>
             <el-button size="mini" type="primary">BD2G06</el-button>
           </div>
-          <img src="@/assets/images/guiji.png" style="width: 100%; height: auto; padding-top: 20px">
+          <div style="position: relative;">
+            <img src="@/assets/images/guiji.png" style="width: 100%; height: auto; padding-top: 20px">
+            <img src="static/globe/satell.svg" style="position: absolute; top: -10%; right: 19%; width: 20px" alt="">
+          </div>
         </div>
       </el-col>
       <el-col :span="7">
@@ -73,11 +76,12 @@
           <el-row class="xinhao">
             <el-col :span="8">
               <div>
-                <img src="@/assets/images/xinhao_red.png" alt="" class="xinhao_error">
+                <img v-show="failStatus" src="@/assets/images/xinhao_red.png" alt="" class="xinhao_error">
                 <img src="@/assets/images/xinhao_gray.png" alt="">
                 <img src="@/assets/images/xinhao_gray.png" alt="">
                 <img src="@/assets/images/xinhao_gray.png" alt="">
                 <img src="@/assets/images/xinhao_gray.png" alt="">
+                <img v-show="!failStatus" src="@/assets/images/xinhao_green.png" alt="">
               </div>
               <p>BD2G01</p>
             </el-col>
@@ -92,7 +96,6 @@
               <p>BD2G0{{ item + 1 }}</p>
             </el-col>
           </el-row>
-          <audio src="@/assets/xinhao2.mp3" autoplay="autoplay" loop="loop" />
         </div>
       </el-col>
       <el-col :span="10">
@@ -120,7 +123,7 @@
       <el-col :span="7">
         <div class="panel line2" style="height: 6.5rem">
           <h2 style="float: none; clear: both">飞行器实时运行影像</h2>
-          <img src="@/assets/images/video.png" style="width: 100%; height: auto; padding-top: 20px">
+          <video src="@/assets/video.mp4" autoplay loop muted width="100%" height="100%" />
         </div>
       </el-col>
     </el-row>
@@ -176,12 +179,12 @@ import { mapState } from 'vuex'
 import ECharts from 'vue-echarts'
 import 'echarts'
 import 'echarts-gl'
-// import china from './china.js'
+// import china from './china.js1'
 // ECharts.registerMap('china', china)
 import chinaMap from './china.json'
 ECharts.registerMap('china', chinaMap)
 
-const colors = ['#8B78F6', '#286c81', '#56D0E3', '#8B78F6', '#247af5']
+const colors = ['#83f574', '#286c81', '#56D0E3', '#83f574', '#247af5']
 const parts = [{
   name: '帆板',
   children: ['轴温1', '轴温2', '主份电机电流1', '主份电机电流2', '备份电机电流1', '备份电机电流2', '壳体温度1', '壳体温度2']
@@ -288,7 +291,7 @@ export default {
     'v-chart': ECharts
   },
   data() {
-    const myColor = ['#247af5', '#F8B448', '#56D0E3', '#F57474', '#8B78F6']
+    const myColor = ['#247af5', '#F8B448', '#56D0E3', '#F57474', '#83f574']
     // function getCirlPoint(x0, y0, r, angle) {
     //   const x1 = x0 + r * Math.cos(angle * Math.PI / 180)
     //   const y1 = y0 + r * Math.sin(angle * Math.PI / 180)
@@ -304,6 +307,10 @@ export default {
         name: '太阳帆板',
         pic: '/static/part/tyfb.png',
         isErr: true
+      }, {
+        name: '星敏感器',
+        pic: '/static/part/xmgq.png',
+        isErr: false
       }, {
         name: '磁力矩器',
         pic: './static/part/cljq.png',
@@ -325,42 +332,9 @@ export default {
         pic: '/static/part/tymgq.png',
         isErr: false
       }, {
-        name: '星敏感器',
-        pic: '/static/part/xmgq.png',
-        isErr: false
-      }, {
         name: '',
         pic: '',
         isErr: false
-      }],
-      tableData: [{
-        name: 'BD2G01',
-        time: '2020-01-02  06:30:32',
-        info: '状态 +y帆板工作信号<0“状态异常”。'
-      }, {
-        name: 'BD2G02',
-        time: '2020-01-02  06:30:36',
-        info: '+y帆板工作方式跳变为“复位保持”。'
-      }, {
-        name: 'BD2G03',
-        time: '2020-01-02  06:30:40',
-        info: '增强天线架构反射器展开驱动装置#温度高于上限'
-      }, {
-        name: 'BD2G04',
-        time: '2020-01-02  06:30:44',
-        info: 'SADA数据-Y-SADM转动方向为正转'
-      }, {
-        name: 'BD2G05',
-        time: '2020-01-02  06:30:48',
-        info: 'SADA数据+Y-SADM转动方向为正转'
-      }, {
-        name: 'BD2G06',
-        time: '2020-01-02  06:30:52',
-        info: 'SADM转动方向为反转'
-      }, {
-        name: 'BD2G07',
-        time: '2020-01-02  06:30:54',
-        info: '监视相机A电源（VMA9）关机！'
       }],
       value: '信号一',
       options: [{
@@ -1015,12 +989,11 @@ export default {
     }
   },
   computed: {
-    ...mapState('first', ['basicData', 'nowTime', 'sunTime'])
+    ...mapState('first', ['basicData', 'nowTime', 'sunTime', 'failStatus', 'tableData'])
   },
   methods: {
     isError({ row, rowIndex }) {
-      console.log(rowIndex)
-      if (rowIndex === 0) {
+      if (row.info.indexOf('异常') > 0) {
         return 'table_error'
       } else if (rowIndex === 3) {
         return 'table_warning'
@@ -1046,10 +1019,10 @@ export default {
   font-size: 18px;
   padding: .2rem 0;
   &.table_error td{
-    color: #cc0000;
+    color: #F57474;
   }
   &.table_warning td{
-    color: #cccc00
+    // color: #F8B448
   }
 }
 .el-table--enable-row-hover .el-table__body tr:hover > td{

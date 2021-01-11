@@ -5,8 +5,8 @@
       <div class="partBox">
         <div class="panel" style="height: 11.6rem;">
           <el-row>
-            <div v-for="(item, index) in part" :key="index" style="position:relative; padding: .2rem; height: 1.6rem" @click="model='bujian'">
-              <div v-if="item.isErr" class="boxBg" />
+            <div v-for="(item, index) in part" :key="index" style="position:relative; padding: .2rem; height: 1.6rem" @click="changePart(item.name)">
+              <div v-if="item.isErr && failStatus" class="boxBg" />
               <p style="position: relative; z-index: 9">{{ item.name }}</p>
               <img v-show="item.pic" :src="item.pic" alt="帆板" style="height: calc(100% - 25px);position: relative; z-index: 10">
             </div>
@@ -25,18 +25,27 @@
           <el-button size="mini" type="primary">BD2G05</el-button>
           <el-button size="mini" type="primary">BD2G06</el-button>
         </div>
-        <div v-if="model === '3d'" style="height: 100%">
-          <model-obj src="/static/3d/file.obj" mtl="/static/3d/file.mtl" :rotation="rotation" :scale="{ x: 1.6, y: 1.6, z: 1.6 }" :background-alpha="0" style="height: 90%" @on-load="modelOnLoad" />
-          <el-button type="danger" style="transform: scale(1.4)">生成故障诊断报告</el-button>
+        <div v-loading="loading" style="height: 100%;">
+          <div v-if="model === '3d'" style="height: 100%;">
+            <!-- <video src="@/assets/video2.mp4" autoplay loop width="auto" height="100%" style="margin-left: -20%" /> -->
+            <model-obj ref="3dModel" src="/static/3d/file12.obj" mtl="/static/3d/file12.mtl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" />
+            <el-button type="danger" style="transform: scale(1.4)">生成故障诊断报告</el-button>
+          </div>
+          <div v-else-if="model === 'zhishi'" style="height: 100%;">
+            <img v-if="failStatus" src="@/assets/images/zhishi.png" style="height: 90%; width: auto;">
+            <img v-else src="@/assets/images/zhishi1.png" style="height: 90%; width: auto;">
+            <el-button type="primary" @click="changeModel('3d')">返回3D模型</el-button>
+          </div>
+          <div v-else-if="model === 'xingmin'" style="height: 100%;">
+            <model-stl src="/static/3d/xingming111.stl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" />
+            <el-button type="primary" @click="changeModel('3d')">返回整体</el-button>
+          </div>
+          <div v-else-if="model === 'bujian'" style="height: 100%;">
+            <!-- <model-fbx src="/static/3d/file8.fbx" :background-alpha="0" style="height: 90%" @on-load="loading = false" @click="changeModel('zhishi')" /> -->
+            <model-obj src="/static/3d/untitled.obj" mtl="/static/3d/untitled.mtl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" @on-click="changeColor" />
+            <el-button type="primary" @click="changeModel('3d')">返回整体</el-button>
+          </div>
         </div>
-        <div v-else-if="model === 'zhishi'">
-          <img src="@/assets/images/zhishi.png" style="width: 90%; height: auto">
-          <el-button type="primary" @click="model='3d'">返回3D模型</el-button>
-        </div>
-        <div v-else-if="model = 'bujian'">
-          <img src="@/assets/images/bujian.png" style="width: 100%; height: 100%">
-          <el-button type="primary" @click="model='3d'">返回3D模型</el-button>
-      </div>
       </div>
     </el-col>
     <el-col :span="8">
@@ -44,43 +53,44 @@
         <el-col :span="12">
           <div class="panel map" style="height: 1.3rem">
             <h2>故障时间</h2>
-            <p class="info">2020-12-31 17:30:00.000</p>
+            <p v-if="failStatus" class="info">{{ '北京时间：' + gzData.data[1].time }}<br>{{ '星时：' + gzData.data[1].starTime.value }}</p>
           </div>
         </el-col>
         <el-col :span="12">
           <div class="panel map" style="height: 1.3rem">
             <v-chart :options="option" autoresize class="echartBox" style="display: none" />
             <h2>故障模式</h2>
-            <p class="info">星箭分离66s左右，双太阳翼未展开</p>
+            <p v-if="failStatus" class="info">{{ gzData.data[1].fault }}</p>
           </div>
         </el-col>
         <el-col :span="12">
           <div class="panel map" style="height: 1.3rem">
             <v-chart :options="option" autoresize class="echartBox" style="display: none" />
             <h2>故障判断</h2>
-            <p class="info">N01009+Y 太阳翼帆板信号故障指示</p>
+            <p v-if="failStatus" class="info">{{ gzData.data[1].ErrDes }}</p>
           </div>
         </el-col>
         <el-col :span="12">
           <div class="panel map" style="height: 1.3rem">
             <v-chart :options="option" autoresize class="echartBox" style="display: none" />
             <h2>故障危害</h2>
-            <p class="info">太阳翼帆板未展开，会导致蓄电池过放电，任务可能失败。</p>
-            <p class="info">严重程度：严重</p>
+            <p v-if="failStatus" class="info">{{ gzData.data[1].ErrHarm }}</p>
           </div>
         </el-col>
         <el-col :span="24">
           <div class="panel map" style="height: 2rem">
             <v-chart :options="option" autoresize class="echartBox" style="display: none" />
             <h2>处置建议</h2>
-            <p class="info">1、 发K2“火工品母线通” 2、 发K1“火工品起爆”</p>
-            <p class="info">若指令无效，向上级请示命令</p>
+            <p v-if="failStatus" class="info">{{ gzData.data[1].Situation }}</p>
           </div>
         </el-col>
       </el-row>
-      <div class="panel map" style="height: 6.4rem">
-        <h2>知识图谱</h2>
-        <img src="@/assets/images/zhishi.png" style="width: 100%; height: auto; padding-top: .5rem" @dblclick="model = 'zhishi'">
+      <div class="panel map" style="height: 6.43rem">
+        <model-obj v-if="model === 'zhishi'" ref="3dModel" src="/static/3d/file12.obj" mtl="/static/3d/file12.mtl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" @click="changeModel('3d')" />
+        <div v-else-if="model !== 'zhishi'" style="height: 100%; width: auto;">
+          <img v-if="failStatus" src="@/assets/images/zhishi.png" style="height: 100%; width: auto;" @click="changeModel('zhishi')">
+          <img v-else src="@/assets/images/zhishi1.png" style="height: 100%; width: auto;" @click="changeModel('zhishi')">
+        </div>
       </div>
     </el-col>
   </el-row>
@@ -88,8 +98,8 @@
 
 <script>
 import 'three'
-import { ModelObj } from 'vue-3d-model'
-import { mapState } from 'vuex'
+import { ModelObj, ModelStl } from 'vue-3d-model'
+import { mapState, mapMutations } from 'vuex'
 
 import ECharts from 'vue-echarts'
 import 'echarts'
@@ -99,7 +109,7 @@ import 'echarts'
 import chinaMap from './china.json'
 ECharts.registerMap('china', chinaMap)
 
-const colors = ['#8B78F6', '#286c81', '#56D0E3', '#8B78F6', '#247af5']
+const colors = ['#83f574', '#286c81', '#56D0E3', '#83f574', '#247af5']
 const parts = [{
   name: '帆板',
   children: ['轴温1', '轴温2', '主份电机电流1', '主份电机电流2', '备份电机电流1', '备份电机电流2', '壳体温度1', '壳体温度2']
@@ -204,6 +214,7 @@ export default {
   name: '',
   components: {
     ModelObj,
+    ModelStl,
     'v-chart': ECharts
   },
   data() {
@@ -216,6 +227,7 @@ export default {
       color: '#ccc'
     }
     return {
+      loading: false,
       model: '3d',
       option: {
         title: {
@@ -279,6 +291,10 @@ export default {
         pic: '/static/part/tyfb.png',
         isErr: true
       }, {
+        name: '星敏感器',
+        pic: '/static/part/xmgq.png',
+        isErr: false
+      }, {
         name: '磁力矩器',
         pic: './static/part/cljq.png',
         isErr: false
@@ -297,10 +313,6 @@ export default {
       }, {
         name: '太阳敏感器',
         pic: '/static/part/tymgq.png',
-        isErr: false
-      }, {
-        name: '星敏感器',
-        pic: '/static/part/xmgq.png',
         isErr: false
       }],
       tableData: [{
@@ -400,7 +412,7 @@ export default {
         total: 235411
       },
       rotation: {
-        x: 0,
+        x: 120,
         y: 0,
         z: 0
       },
@@ -514,9 +526,51 @@ export default {
     }
   },
   computed: {
-    ...mapState('first', ['basicData'])
+    ...mapState('first', ['basicData', 'failStatus', 'gzData'])
+  },
+  watch: {
+    failStatus: {
+      handler(newVal) {
+        if (newVal) {
+          const fanban = this.$refs['3dModel'].object.children.find(c => c => c.name === 'Box11_网格.004')
+          fanban.material.color.b = 0.47347
+          fanban.material.color.g = 0.47347
+          fanban.material.color.r = 0.96078
+        } else {
+          const fanban = this.$refs['3dModel'].object.children.find(c => c => c.name === 'Box11_网格.004')
+          fanban.material.color.b = 0.716814
+          fanban.material.color.g = 0.433347
+          fanban.material.color.r = 0.201419
+        }
+      }
+    }
   },
   methods: {
+    changeColor(e) {
+      console.log(e)
+      const a = e.object.parent.children.find(c => c.name === 'revlv_2_网格.129')
+      console.log(a)
+      a.material.color.b = 0
+      a.material.color.g = 0
+      a.material.color.r = 255
+      const b = e.object.parent.children.find(c => c.name === 'Box11_网格.004')
+      b.material.color.b = 0
+      b.material.color.g = 255
+      b.material.color.r = 255
+    },
+    changePart(name) {
+      if (name === '星敏感器') {
+        this.changeModel('xingmin')
+      } else if (name === '太阳帆板') {
+        this.changeModel('3d')
+      }
+    },
+    changeModel(model) {
+      if (model !== this.model) {
+        this.loading = true
+        this.model = model
+      }
+    },
     modelOnLoad() {
       this.rotate()
     },
@@ -530,7 +584,8 @@ export default {
           done()
         })
         .catch(_ => {})
-    }
+    },
+    ...mapMutations('first', ['setFailStatus'])
   }
 }
 </script>
@@ -539,6 +594,9 @@ export default {
 @import 'style/index.scss';
 .mainbox .modelBox  .panel h2{
   font-size: 0.22rem;
+}
+.el-loading-mask{
+  background: rgba(0,0,0,0.8);
 }
 .partBox{
   width: 100%;

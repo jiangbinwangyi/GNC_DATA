@@ -13,9 +13,43 @@
     </el-col>
     <el-col :span="12">
       <!-- 地图模块 -->
-      <div class="panel map" style="height: 11.5rem">
-        <h2>遥测信号历史折线图</h2>
-        <v-chart :options="option" style="height: 80%;" autoresize class="echartBox" />
+      <div class="panel" style="height: 1rem">
+        <el-form label-width="120px">
+          <el-form-item label="选择遥测参数">
+            <el-select v-model="metaValue" style="width: 100%" @change="setOptionMain">
+              <el-option
+                v-for="item in metaList"
+                :key="item.metaColumnId"
+                :label="item.metaColumnName"
+                :value="item.metaColumnId"
+              />
+            </el-select>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="panel map" style="height: 10.3rem">
+        <h2>遥测信号时域分析</h2>
+        <v-chart :options="optionMain" style="height: 70%;" autoresize class="echartBox" />
+        <h3 style="font-size: .22rem; text-align: center; color: #fff; margin: .5rem 0 .3rem">统计量</h3>
+        <el-table
+          border
+          fit
+          :data="tableList"
+          highlight-current-row
+          style="width: 100%;"
+          class="tableData"
+        >
+          <el-table-column prop="Max" label="最大值" />
+          <el-table-column prop="Min" label="最小值" />
+          <el-table-column prop="Average" label="平均值" />
+          <el-table-column prop="Variance" label="方差" />
+          <el-table-column prop="MeanSquare" label="均方差" />
+          <el-table-column prop="StandardDeviation" label="均方根" />
+          <el-table-column prop="lowerquantile" label="1/4分位数" />
+          <el-table-column prop="Median" label="中位数" />
+          <el-table-column prop="upperquantile" label="3/4分位数" />
+          <el-table-column prop="AccumulativeTotal" label="累计数" />
+        </el-table>
       </div>
     </el-col>
     <el-col :span="6">
@@ -24,15 +58,17 @@
         <v-chart :options="barOption2" class="echartBox" />
       </div>
       <div class="panel">
-        <h2>遥测信号数据拟合</h2>
-        <v-chart :options="barOption3" class="echartBox" />
+        <h2>遥测信号历史数据分析</h2>
+        <p style="font-size: 14px; color: #ccc; text-align: center; line-height: 1; padding-top: 10px">时间：8546.666</p>
+        <v-chart :options="barOption5" class="echartBox" style="margin: 0; padding: 0" />
       </div>
     </el-col>
   </el-row>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { getTelemetrySample, getTimeDomainResult, getFFTMainResult } from '@/api/dataChart/index'
+import { mapMutations, mapState } from 'vuex'
 
 import dataTool from 'echarts/extension/dataTool'
 import ECharts from 'vue-echarts'
@@ -54,23 +90,108 @@ for (var i = 0; i < 100; i++) {
   data2.push((Math.cos(i / 5) * (i / 5 - 10) + i / 6) * 5)
 }
 
-const boxData = dataTool.prepareBoxplotData([
-  [850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960],
-  [960, 940, 960, 940, 880, 800, 850, 880, 900, 840, 830, 790, 810, 880, 880, 830, 800, 790, 760, 800],
-  [880, 880, 880, 860, 720, 720, 620, 860, 970, 950, 880, 910, 850, 870, 840, 840, 850, 840, 840, 840],
-  [890, 810, 810, 820, 800, 770, 760, 740, 750, 760, 910, 920, 890, 860, 880, 720, 840, 850, 850, 780],
-  [890, 840, 780, 810, 760, 810, 790, 810, 820, 850, 870, 870, 810, 740, 810, 940, 950, 800, 810, 870]
-])
-
 export default {
   name: '',
   components: {
     'v-chart': ECharts
   },
   data() {
-    const myColor = ['#247af5', '#8B78F6', '#F57474', '#56D0E3', '#F8B448']
+    const myColor = ['#247af5', '#83f574', '#56D0E3', '#F8B448', '#F57474']
 
     return {
+      tableList: [],
+      metaValue: '5419',
+      metaList: [{
+        metaColumnId: '5419',
+        metaColumnName: 'SQL_SBX'
+      }, {
+        metaColumnId: '5422',
+        metaColumnName: 'SQL_SBZ'
+      }, {
+        metaColumnId: '5423',
+        metaColumnName: 'SQL_EBY'
+      }, {
+        metaColumnId: '5426',
+        metaColumnName: 'SQL_EBX'
+      }, {
+        metaColumnId: '5427',
+        metaColumnName: 'SQL_EBZ'
+      }, {
+        metaColumnId: '5428',
+        metaColumnName: 'SQL_X'
+      }],
+      formInline: {
+        metaColumnIds: '5419',
+        teststartTime: '2000-10-21T00:52:02.000Z',
+        testendTime: '2020-10-20T01:52:02.000Z',
+        sampleNum: 888
+      },
+      barOption5: {
+        tooltip: {},
+        visualMap: {
+          max: 60,
+          show: false,
+          inRange: { color: myColor }
+        },
+        xAxis3D: {
+          type: 'category',
+          name: '',
+          nameTextStyle: {
+            color: '#fff'
+          },
+          axisLabel: {
+            color: '#fff'
+          },
+          data: (() => {
+            const arr = []
+            for (let i = 1; i < 25; i++) {
+              arr.push('信号' + i)
+            }
+            return arr
+          })()
+        },
+        yAxis3D: {
+          type: 'category',
+          name: '',
+          axisLabel: {
+            color: '#fff'
+          },
+          data: ['信号A', '信号B', '信号C', '信号D', '信号E', '信号F', '信号G']
+        },
+        zAxis3D: {
+          type: 'value',
+          name: '信号值',
+          nameTextStyle: {
+            color: '#fff',
+            fontSize: 12
+          },
+          axisLabel: {
+            color: '#fff'
+          },
+          max: 60
+        },
+        grid3D: {
+          top: '-10%',
+          boxWidth: 150,
+          boxDepth: 60,
+          viewControl: {
+            distance: 200,
+            alpha: 10,
+            beta: 20
+          }
+        },
+        series: [{
+          type: 'bar3D',
+          data: this.$store.state.first.barData,
+          shading: 'lambert',
+          label: {
+            textStyle: {
+              fontSize: 16,
+              borderWidth: 1
+            }
+          }
+        }]
+      },
       tableData: [{
         date: '1',
         name: '星敏Vx',
@@ -100,232 +221,9 @@ export default {
       count: {
         total: 235411
       },
-      barOption: {
-        tooltip: {
-          trigger: 'item'
-        },
-        grid: {
-          left: '10%',
-          right: '10%',
-          bottom: '15%'
-        },
-        xAxis: {
-          type: 'category',
-          data: boxData.axisData,
-          boundaryGap: true,
-          nameGap: 30,
-          splitArea: {
-            show: false
-          },
-          axisLabel: {
-            formatter: '信号 {value}',
-            color: '#fff'
-          },
-          splitLine: {
-            show: false
-          }
-        },
-        yAxis: {
-          type: 'value',
-          min: 500,
-          axisLabel: {
-            color: '#fff'
-          },
-          splitArea: {
-            show: true
-          }
-        },
-        series: [
-          {
-            name: 'boxplot',
-            type: 'boxplot',
-            data: boxData.boxData,
-            tooltip: {
-              formatter(param) {
-                return [
-                  '星敏Vx ' + param.name + ': ',
-                  '星敏Vy: ' + param.data[5],
-                  '星敏Vz: ' + param.data[4],
-                  '矫正速度Vx: ' + param.data[3],
-                  '矫正速度Vy: ' + param.data[2],
-                  '矫正速度Vz: ' + param.data[1]
-                ].join('<br/>')
-              }
-            }
-          },
-          {
-            name: 'outlier',
-            type: 'scatter',
-            data: boxData.outliers
-          }
-        ]
-      },
-      pieOption: {
-        legend: {
-          textStyle: {
-            color: '#4c9bfd'
-          },
-          left: 'center',
-          top: '12%'
-        },
-        color: myColor,
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-          }
-        },
-        grid: {
-          left: '0%',
-          right: '0%',
-          bottom: '10%',
-          containLabel: true
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: ['1min', '2min', '3min', '4min', '5min', '6min', '7min', '8min'],
-          axisTick: {
-            show: false // 去除刻度线
-          },
-          axisLabel: {
-            color: '#fff' // 文本颜色
-          },
-          axisLine: {
-            show: false // 去除轴线
-          }
-        },
-        yAxis: {
-          type: 'value',
-          minInterval: 1,
-          min: -1,
-          max: 3,
-          axisLabel: {
-            color: '#fff' // 文本颜色
-          },
-          boundaryGap: false, // 去除轴内间距
-          splitLine: {
-            lineStyle: {
-              color: '#012f4a' // 分割线颜色
-            }
-          }
-        },
-        series: [
-          {
-            name: '包络上限',
-            type: 'line',
-            smooth: true,
-            data: [1.1, 1.3, 1.1, 1.3, 1.1, 1.3, 1.1, 1.4, 1.1, 1.3, 1.1, 1.4]
-          },
-          {
-            name: '校正速度Vy',
-            type: 'line',
-            smooth: true,
-            data: [0.7, 1, 0.8, 1, 0.7, 1, 0.8, 1, 0.7, 1, 0.8, 1]
-          },
-          {
-            name: '包络下限',
-            type: 'line',
-            smooth: true,
-            data: [0.3, 0.5, 0.3, 0.5, 0.3, 0.5, 0.3, 0.5, 0.3, 0.5, 0.3, 0.6]
-          }
-        ]
-      },
-      barOption2: {
-        grid: {
-          top: '10%',
-          bottom: '30%'
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'cross',
-            animation: false,
-            label: {
-              backgroundColor: '#505765'
-            }
-          }
-        },
-        dataZoom: [
-          {
-            show: true,
-            realtime: true,
-            start: 65,
-            end: 85,
-            top: '80%'
-          }
-        ],
-        xAxis: [
-          {
-            type: 'category',
-            boundaryGap: false,
-            axisLabel: {
-              color: 'rgba(255, 255, 255,.8)',
-              fontSize: '12'
-            },
-            axisLine: {
-              lineStyle: {
-                color: 'rgba(255, 255, 255,.8)',
-                width: 2,
-                type: 'solid'
-              }
-            },
-            // y轴分割线
-            splitLine: {
-              lineStyle: {
-                color: 'rgba(255, 255, 255,.8)'
-              }
-            },
-            data: (() => {
-              const arr = []
-              for (let i = 0; i < 3000; i++) {
-                arr.push(i * 600)
-              }
-              return arr
-            })()
-          }
-        ],
-        yAxis: [{
-          name: '振幅',
-          type: 'value',
-          max: 2000,
-          axisLabel: {
-            color: 'rgba(255, 255, 255,.8)',
-            fontSize: '12'
-          },
-          axisLine: {
-            lineStyle: {
-              color: 'rgba(255, 255, 255,.8)',
-              width: 2,
-              type: 'solid'
-            }
-          },
-          // y轴分割线
-          splitLine: {
-            lineStyle: {
-              color: 'rgba(255, 255, 255,.8)'
-            }
-          }
-        }],
-        series: [{
-          name: '流量',
-          type: 'line',
-          animation: false,
-          barWidth: 1,
-          data: (() => {
-            const result = []
-            for (let i = 0; i < 3000; i++) {
-              const range = parseInt(Math.random() * 2000)
-              if (range % 33 === 0) {
-                result.push(parseInt(Math.random() * 1000 + 500))
-              } else {
-                result.push(parseInt(Math.random() * 300 + 100))
-              }
-            }
-            return result
-          })()
-        }]
-      },
+      barOption: null,
+      pieOption: null,
+      barOption2: null,
       barOption3: {
         xAxis: {
           type: 'category',
@@ -406,97 +304,162 @@ export default {
           ]
         }]
       },
-      option: {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+      optionDefault: {
+        xAxis: {
+          name: '信号',
+          data: [],
+          axisTick: {
+            show: false
+          },
+          axisLabel: {
+            color: '#fff'
           }
         },
-        grid: {
-          left: '0%',
-          right: '0%',
-          bottom: '8%',
-          containLabel: true
+        color: myColor,
+        tooltip: {
+          // formatter(params) {
+          //   return params[0].value
+          // },
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross'
+          },
+          padding: [5, 10]
         },
-        xAxis: {
-          name: '(ms)',
-          type: 'category',
-          boundaryGap: false,
-          axisLabel: {
-            color: 'rgba(255, 255, 255,.6)'
-          },
-          axisLine: {
-            lineStyle: {
-              color: 'rgba(255, 255, 255,.5)',
-              width: 2,
-              type: 'solid'
-            }
-          },
-          data: this.$store.state.first.basicData.healthy.time
+        toolbox: {
+          left: 'center',
+          feature: {
+            dataZoom: {
+              yAxisIndex: 'none',
+              type: 'takeGlobalCursor',
+              key: 'dataZoomSelect',
+              dataZoomSelectActive: true
+            },
+            restore: {},
+            saveAsImage: {}
+          }
         },
         yAxis: {
-          name: '健康值',
-          // maxInterval: 20,
-          type: 'value',
-          min: 85,
-          max: 110,
+          name: '值',
+          axisTick: {
+            show: false
+          },
           axisLabel: {
-            color: 'rgba(255, 255, 255,.6)',
-            fontSize: '12'
-          },
-          axisLine: {
-            lineStyle: {
-              color: 'rgba(255, 255, 255, .5)',
-              width: 2,
-              type: 'solid'
-            }
-          },
-          // y轴分割线
-          splitLine: {
-            lineStyle: {
-              color: 'rgba(255, 255, 255,.1)'
-            }
+            color: '#fff'
           }
         },
         series: [{
-          name: '矫正速度Vx',
-          data: [94.2, 95.3, 98.3, 94.3, 93.5, 94.8, 97.3, 99.6, 94.6, 96.8, 99.1, 95.4, 95.7, 93.5, 94.8, 97.3, 99.6, 94.6, 96.8, 97.2],
+          name: 'expected',
           type: 'line',
-          markPoint: {
-            data: [
-              { type: 'max', name: '最大值' },
-              { type: 'min', name: '最小值' }
-            ]
-          },
-          itemStyle: {
-            normal: {
-              color: myColor[0] // 改变折线点的颜色
-            }
-          }
-        }, {
-          name: '矫正速度Vy',
-          data: [96.8, 99.1, 95.4, 94.2, 95.9, 93.8, 94.8, 97.3, 99.2, 94.6, 96.8, 97.2, 98.3, 94.3, 93.7, 94.8, 97.3, 99.3, 94.6, 95.7],
-          type: 'line',
-          markPoint: {
-            data: [
-              { type: 'max', name: '最大值' },
-              { type: 'min', name: '最小值' }
-            ]
-          },
-          itemStyle: {
-            normal: {
-              color: myColor[2] // 改变折线点的颜色
-            }
-          }
+          animationDuration: 2800,
+          animationEasing: 'cubicInOut',
+          smooth: true,
+          data: []
         }]
-      }
+      },
+      optionMain: null
     }
   },
   computed: {
     ...mapState('first', ['basicData'])
   },
-  methods: {}
+  created() {
+    this.setBarData()
+    this.formInline.metaColumnIds = this.metaList.map(e => e.metaColumnId)
+    this.getTimeDomainResult(this.formInline).then(res => {
+      this.dataList = res
+      this.setOptionMain()
+    })
+  },
+  methods: {
+    setOptionMain() {
+      this.formInline.metaColumnIds = [this.metaValue]
+      this.getTelemetrySample(this.formInline).then(response => {
+        // 时域分析
+        const newSetOption = JSON.parse(JSON.stringify(this.optionDefault))
+        response[0].tdata.forEach(e => {
+          newSetOption.xAxis.data.push(Object.keys(e)[0])
+          newSetOption.series[0].data.push(Object.values(e)[0])
+        })
+        this.optionMain = newSetOption
+        // 包络分析
+        const limitOption = JSON.parse(JSON.stringify(newSetOption))
+        limitOption.series[0].markLine = {
+          silent: true,
+          precision: 8,
+          lineStyle: {
+            color: '#F57474'
+          },
+          data: [{
+            type: 'max',
+            name: '最大值'
+          }, {
+            type: 'min',
+            name: '最小值'
+          }]
+        }
+        this.pieOption = limitOption
+      })
+      // 频域分析
+      this.getFFTMainResult(this.formInline).then(response => {
+        const newSetOption = JSON.parse(JSON.stringify(this.optionDefault))
+        response.forEach(e => {
+          newSetOption.xAxis.data = Object.keys(e.FrequencyAmplitude)
+          newSetOption.series[0].data = Object.values(e.FrequencyAmplitude)
+        })
+        this.barOption2 = newSetOption
+      })
+      // 统计量
+      this.tableList = [this.dataList.find(e => e.metaColumnId === this.metaValue)]
+      // 箱线图
+      const boxOption = JSON.parse(JSON.stringify(this.optionDefault))
+      const boxData = []
+      for (let i = 0; i < 1; i++) {
+        boxData.push([
+          this.dataList[i].Min,
+          this.dataList[i].Max,
+          this.dataList[i].Median,
+          this.dataList[i].lowerquantile,
+          this.dataList[i].upperquantile
+        ])
+        boxOption.xAxis.data.push(this.metaList[i].metaColumnName)
+      }
+      boxOption.series[0].type = 'boxplot'
+      boxOption.series[0].data = dataTool.prepareBoxplotData(boxData).boxData
+      this.barOption = boxOption
+    },
+    // 获取遥测工程值数据
+    getTelemetrySample(data) {
+      return new Promise((resolve, reject) => {
+        getTelemetrySample(data).then(response => {
+          resolve(response.data)
+        }).catch(() => {
+          reject(false)
+        })
+      })
+    },
+    // 时域分析返回数据
+    getTimeDomainResult(data) {
+      return new Promise((resolve, reject) => {
+        getTimeDomainResult(data).then(response => {
+          resolve(response.data)
+        }).catch(() => {
+          reject(false)
+        })
+      })
+    },
+    // 获取主要的FFT值
+    getFFTMainResult(data) {
+      return new Promise((resolve, reject) => {
+        getFFTMainResult(data).then(response => {
+          resolve(response.data)
+        }).catch(() => {
+          reject(false)
+        })
+      })
+    },
+    ...mapMutations('first', ['setBasicData', 'setBarData'])
+  }
 }
 </script>
 
@@ -504,14 +467,28 @@ export default {
 @import 'style/index.scss';
 .relationBox{
   .panel{
-    height: 5.6rem;
+    height: 5.65rem;
   }
-  .panel.map{}
-}
-.el-table.tableData {
-  background: none;
-  th, tr{
+  .el-table.tableData {
     background: none;
+    padding: 0;
+    margin-top: 10px;
+    th, tr{
+      background: none;
+      border-color: #fff;
+      color: #fff;
+      font-size: 14px;
+      line-height: auto;
+      &:hover, &.isActive, &.current-row{
+        background: none;
+        td {
+          background: none;
+        }
+      }
+      td {
+        font-size: 14px;
+      }
+    }
   }
 }
 </style>

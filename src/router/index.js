@@ -82,11 +82,11 @@ export const constantRoutes = [
     }, {
       path: 'track',
       component: () => import('@/pagesFront/track'),
-      meta: { name: '实时诊断' }
+      meta: { name: '实时预测' }
     }, {
       path: '3Dmodel',
       component: () => import('@/pagesFront/3Dmodel'),
-      meta: { name: '实时预测' }
+      meta: { name: '实时诊断' }
     }, {
       path: 'relation',
       component: () => import('@/pagesFront/relation'),

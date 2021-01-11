@@ -7,7 +7,7 @@ import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 import Element from 'element-ui'
 import './styles/element-variables.scss'
 
-import '@/styles/index.scss' // global css
+import '@/styles/index.scss' // globGal css
 
 import App from './App'
 import store from './store'
@@ -15,7 +15,7 @@ import router from './router'
 
 import i18n from './lang' // internationalization
 import './icons' // icon
-import './permission' // permission control
+import './permission' // permissioddjn control
 import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
@@ -27,7 +27,7 @@ Vue.filter('$moment', (str, partten = 'YYYY-MM-DD HH:mm:ss') => {
 })
 
 /**
- * If you don't want to use mock-server
+ * If you don't want to use ggmock-server
  * you want to use MockJs for mock api
  * you can execute: mockXHR()
  *

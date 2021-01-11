@@ -36,7 +36,7 @@ router.beforeEach(async(to, from, next) => {
           // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
           await store.dispatch('user/getInfo') // 暂无用户信息接口
 
-          await store.dispatch('user/createWS') // 创建ws链接
+          // await store.dispatch('user/createWS') // 创建ws链接
 
           // generate accessible routes map based on roles
           const accessRoutes = await store.dispatch('permission/generateRoutes')

@@ -1,6 +1,6 @@
 <template>
   <el-row style="width: 100%" :gutter="20" class="trackBox">
-    <el-col :span="16">
+    <el-col :span="12">
       <div class="panel line">
         <h2>遥测信号的未来趋势预测信息</h2>
         <v-chart
@@ -10,7 +10,7 @@
         />
       </div>
     </el-col>
-    <el-col :span="8">
+    <el-col :span="12">
       <div class="panel line" style="height: 5.6rem; overflow:hidden;">
         <h2>预测报警记录表</h2>
         <el-table
@@ -43,7 +43,7 @@
             label="异常后果"
           >
             <template slot-scope="scope">
-              <el-tag type="danger" effect="plain">{{ scope.row.result }}</el-tag>
+              <el-link type="danger">{{ scope.row.result }}</el-link>
             </template>
           </el-table-column>
           <el-table-column
@@ -52,17 +52,27 @@
             width="120"
           >
             <template slot-scope="scope">
-              <el-tag type="success" effect="plain">{{ scope.row.method }}</el-tag>
+              <el-link type="success">{{ scope.row.method }}</el-link>
             </template>
           </el-table-column>
         </el-table>
       </div>
     </el-col>
-    <el-col :span="24">
+    <el-col :span="12">
       <div class="panel line">
         <h2>XX飞行器剩余寿命预测</h2>
         <v-chart
           :options="mapOption2"
+          autoresize
+          style="height: 100%;width:100%"
+        />
+      </div>
+    </el-col>
+    <el-col :span="12">
+      <div class="panel line">
+        <h2>XX飞行器健康监视</h2>
+        <v-chart
+          :options="mapOption3"
           autoresize
           style="height: 100%;width:100%"
         />
@@ -77,17 +87,132 @@ import data from './life-expectancy-table.json'
 import ECharts from 'vue-echarts'
 import 'echarts'
 import 'echarts-gl'
+import { mapState } from 'vuex'
 
 export default {
   components: {
     'v-chart': ECharts
   },
   data() {
-    const myColor = ['#247af5', '#F57474', '#56D0E3', '#F8B448', '#8B78F6']
+    const myColor = ['#247af5', '#F57474', '#56D0E3', '#F8B448', '#83f574']
     // const planePath = 'path://M1007.315862 166.87669L856.478897 16.057379c-21.044966-21.044966-54.360276-21.044966-73.65738 0L563.614897 235.272828c-21.044966 21.044966-21.044966 54.360276 0 73.648551l59.630344 59.630345-29.810758 29.810759-19.297104-19.288276c-28.054069-28.062897-64.882759-40.342069-99.954758-40.342069-47.351172-38.576552-108.738207-43.837793-143.80138-8.765793-35.080828 35.080828-29.819586 96.459034 8.765793 143.801379 0 36.837517 12.270345 71.909517 40.333242 99.972414l19.288276 19.288276-29.810759 29.810758-59.630345-59.621517c-21.044966-21.044966-54.360276-21.044966-73.657379 0L16.454621 782.433103c-21.044966 21.044966-21.044966 54.360276 0 73.648552l150.81931 150.828138c21.044966 21.044966 54.369103 21.044966 73.657379 0L460.146759 787.685517c21.044966-21.044966 21.044966-54.369103 0-73.657379l-50.846897-50.855724 29.801931-29.819586 66.648276 66.648275c17.531586-40.342069 45.594483-80.67531 80.666483-115.74731 35.072-35.080828 75.414069-63.134897 115.74731-80.67531l-66.648276-66.648276 29.819586-29.801931 50.855725 50.846896c21.044966 21.053793 54.369103 21.053793 73.657379 0l219.215448-219.20662c19.288276-19.288276 19.288276-52.612414-1.75669-71.90069z'
     // const planePath = 'image:///static/globe/satell.svg'
     // const barData = [[0, 0, 5], [0, 1, 1], [0, 2, 0], [0, 3, 0], [0, 4, 0], [0, 5, 0], [0, 6, 0], [0, 7, 0], [0, 8, 0], [0, 9, 0], [0, 10, 0], [0, 11, 2], [0, 12, 4], [0, 13, 1], [0, 14, 1], [0, 15, 3], [0, 16, 4], [0, 17, 6], [0, 18, 4], [0, 19, 4], [0, 20, 3], [0, 21, 3], [0, 22, 2], [0, 23, 5], [1, 0, 7], [1, 1, 0], [1, 2, 0], [1, 3, 0], [1, 4, 0], [1, 5, 0], [1, 6, 0], [1, 7, 0], [1, 8, 0], [1, 9, 0], [1, 10, 5], [1, 11, 2], [1, 12, 2], [1, 13, 6], [1, 14, 9], [1, 15, 11], [1, 16, 6], [1, 17, 7], [1, 18, 8], [1, 19, 12], [1, 20, 5], [1, 21, 5], [1, 22, 7], [1, 23, 2], [2, 0, 1], [2, 1, 1], [2, 2, 0], [2, 3, 0], [2, 4, 0], [2, 5, 0], [2, 6, 0], [2, 7, 0], [2, 8, 0], [2, 9, 0], [2, 10, 3], [2, 11, 2], [2, 12, 1], [2, 13, 9], [2, 14, 8], [2, 15, 10], [2, 16, 6], [2, 17, 5], [2, 18, 5], [2, 19, 5], [2, 20, 7], [2, 21, 4], [2, 22, 2], [2, 23, 4], [3, 0, 7], [3, 1, 3], [3, 2, 0], [3, 3, 0], [3, 4, 0], [3, 5, 0], [3, 6, 0], [3, 7, 0], [3, 8, 1], [3, 9, 0], [3, 10, 5], [3, 11, 4], [3, 12, 7], [3, 13, 14], [3, 14, 13], [3, 15, 12], [3, 16, 9], [3, 17, 5], [3, 18, 5], [3, 19, 10], [3, 20, 6], [3, 21, 4], [3, 22, 4], [3, 23, 1], [4, 0, 1], [4, 1, 3], [4, 2, 0], [4, 3, 0], [4, 4, 0], [4, 5, 1], [4, 6, 0], [4, 7, 0], [4, 8, 0], [4, 9, 2], [4, 10, 4], [4, 11, 4], [4, 12, 2], [4, 13, 4], [4, 14, 4], [4, 15, 14], [4, 16, 12], [4, 17, 1], [4, 18, 8], [4, 19, 5], [4, 20, 3], [4, 21, 7], [4, 22, 3], [4, 23, 0], [5, 0, 2], [5, 1, 1], [5, 2, 0], [5, 3, 3], [5, 4, 0], [5, 5, 0], [5, 6, 0], [5, 7, 0], [5, 8, 2], [5, 9, 0], [5, 10, 4], [5, 11, 1], [5, 12, 5], [5, 13, 10], [5, 14, 5], [5, 15, 7], [5, 16, 11], [5, 17, 6], [5, 18, 0], [5, 19, 5], [5, 20, 3], [5, 21, 4], [5, 22, 2], [5, 23, 0], [6, 0, 1], [6, 1, 0], [6, 2, 0], [6, 3, 0], [6, 4, 0], [6, 5, 0], [6, 6, 0], [6, 7, 0], [6, 8, 0], [6, 9, 0], [6, 10, 1], [6, 11, 0], [6, 12, 2], [6, 13, 1], [6, 14, 3], [6, 15, 4], [6, 16, 0], [6, 17, 0], [6, 18, 0], [6, 19, 0], [6, 20, 1], [6, 21, 2], [6, 22, 2], [6, 23, 6]]
     return {
+      mapOption3: {
+        tooltip: {
+          formatter: '{a} <br/>{c} {b}'
+        },
+        color: myColor,
+        toolbox: {
+          show: true,
+          feature: {
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
+        series: [
+          {
+            name: '速度',
+            type: 'gauge',
+            z: 3,
+            min: 0,
+            max: 100,
+            center: ['72%', '55%'],
+            radius: '70%',
+            axisLine: {
+              lineStyle: {
+                width: 3,
+                shadowColor: '#fff',
+                shadowBlur: 5,
+                color: [[0.1, '#F57474'], [0.25, '#F8B448'], [0.7, '#247af5'], [0.85, '#56D0E3'], [1, '#83f574']]
+              }
+            },
+            axisTick: {
+              length: 15,
+              lineStyle: {
+                color: 'auto'
+              }
+            },
+            splitLine: {
+              length: 20,
+              lineStyle: {
+                color: 'auto'
+              }
+            },
+            axisLabel: {
+              backgroundColor: 'auto',
+              borderRadius: 2,
+              color: '#eee',
+              padding: 3,
+              textShadowBlur: 2,
+              textShadowOffsetX: 1,
+              textShadowOffsetY: 1,
+              textShadowColor: '#222'
+            },
+            detail: {
+              // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+              formatter(value) {
+                value = (value + '').split('.')
+                value.length < 2 && (value.push('00'))
+                return ('00' + value[0]).slice(-2) + '.' + (value[1] + '00').slice(0, 2)
+              },
+              fontWeight: 'bolder',
+              borderRadius: 3,
+              backgroundColor: '#444',
+              borderColor: '#aaa',
+              shadowBlur: 5,
+              shadowColor: '#333',
+              shadowOffsetX: 0,
+              shadowOffsetY: 3,
+              borderWidth: 2,
+              textBorderColor: '#000',
+              textBorderWidth: 2,
+              textShadowBlur: 2,
+              textShadowColor: '#fff',
+              textShadowOffsetX: 0,
+              textShadowOffsetY: 0,
+              fontFamily: 'Arial',
+              width: 100,
+              color: '#eee',
+              rich: {}
+            },
+            data: [{ value: 92.55, name: '健康值' }]
+          },
+          {
+            name: '转速',
+            type: 'gauge',
+            center: ['27%', '55%'],
+            radius: '70%',
+            min: 0,
+            max: 10,
+            axisLine: {
+              lineStyle: {
+                width: 3,
+                shadowColor: '#fff',
+                shadowBlur: 5,
+                color: [[0.1, '#F57474'], [0.25, '#F8B448'], [0.7, '#247af5'], [0.85, '#56D0E3'], [1, '#83f574']]
+              }
+            },
+            axisTick: {
+              length: 12,
+              lineStyle: {
+                color: 'auto'
+              }
+            },
+            splitLine: {
+              length: 20,
+              lineStyle: {
+                color: 'auto'
+              }
+            },
+            detail: {
+              fontWeight: 'bolder'
+            },
+            data: [{ value: 9.5, name: '剩余寿命 年' }]
+          }
+        ]
+      },
       tableData: [{
         date: '1',
         name: '星敏Vx',
@@ -154,14 +279,14 @@ export default {
           axisLabel: {
             color: '#fff'
           },
-          data: ['12a', '1a', '2a', '3a', '4a', '5a', '6a', '7a', '8a', '9a', '10a', '11a', '12p', '1p', '2p', '3p', '4p', '5p', '6p', '7p', '8p', '9p', '10p', '11p']
+          data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24']
         },
         yAxis3D: {
           type: 'category',
           axisLabel: {
             color: '#fff'
           },
-          data: ['Saturday', 'Friday', 'Thursday', 'Wednesday', 'Tuesday', 'Monday', 'Sunday']
+          data: ['a', 'b', 'c', 'd', 'e', 'f', 'g']
         },
         zAxis3D: {
           type: 'value'
@@ -243,12 +368,13 @@ export default {
         grid: {
           top: '15%',
           left: '5%',
-          right: '5%',
+          right: '8%',
           bottom: '15%'
           // containLabel: true
         },
         xAxis: [{
           type: 'category',
+          name: '预测日期',
           axisLabel: {
             color: 'rgba(255,255,255,.8)',
             fontSize: '12'
@@ -267,13 +393,12 @@ export default {
             }
           },
           boundaryGap: false,
-          data: ['11-01', '11-02', '11-03', '11-04', '11-05', '11-06', '11-07', '11-08', '11-09', '11-10', '11-11', '11-12', '11-13']
+          data: this.$store.state.first.life.xAxis
         }],
         yAxis: [{
           type: 'value',
-          min: 0,
-          // max: 140,
-          splitNumber: 4,
+          name: '剩余时间(h)',
+          max: 2000,
           axisLabel: {
             color: 'rgba(255,255,255,.8)',
             fontSize: '12'
@@ -336,7 +461,7 @@ export default {
               shadowBlur: 20
             }
           },
-          data: [502.84, 492.84, 482.84, 472.84, 462.84, 452.84, 442.84, 432.84, 422.84, 412.84, 402.84, 392.84, 382.84, 372.84, 362.84, 352.84, 342.84, 332.84, 502.84, 502.84, 502.84, 502.84, 502.84]
+          data: this.$store.state.first.life.data
         }]
       },
       barOption2: {
@@ -460,12 +585,11 @@ export default {
         },
         grid: {
           left: '0%',
-          right: '0%',
           bottom: '10%',
           containLabel: true
         },
         xAxis: {
-          name: '(ms)',
+          name: '时间(ms)',
           type: 'category',
           boundaryGap: false,
           axisLabel: {
@@ -549,6 +673,17 @@ export default {
         }]
       }
     }
+  },
+  computed: {
+    ...mapState('first', ['healthyValue'])
+  },
+  watch: {
+    healthyValue: {
+      handler(newVal) {
+        this.mapOption3.series[0].data[0].value = newVal
+      },
+      deep: true
+    }
   }
 }
 </script>
@@ -592,12 +727,22 @@ export default {
   }
   .el-table.tableData {
     background: none;
+    padding: 0;
+    margin-top: 10px;
     th, tr{
       background: none;
       border-color: #fff;
       color: #fff;
+      font-size: 14px;
+      line-height: auto;
       &:hover, &.isActive{
         background: none;
+        td {
+          background: none;
+        }
+      }
+      td {
+        font-size: 14px;
       }
     }
   }

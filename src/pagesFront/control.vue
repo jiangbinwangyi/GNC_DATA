@@ -11,10 +11,10 @@ export default {
     ...mapState('first', ['menu'])
   },
   created() {
-    this.createWebsocket()
+    // this.createWebsocket()
   },
   methods: {
-    ...mapActions('first', ['createWebsocket', 'fetchMenuActive'])
+    ...mapActions('first', ['fetchMenuActive'])
   }
 }
 </script>
