@@ -1004,6 +1004,8 @@ export default {
     },
     rotate() {
       this.rotation.y += 0.003
+      this.rotation.z += 0.001
+      this.rotation.x += 0.001
       requestAnimationFrame(this.rotate)
     }
   }

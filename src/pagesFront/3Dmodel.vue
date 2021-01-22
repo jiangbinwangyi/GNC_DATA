@@ -45,6 +45,16 @@
             <model-obj src="/static/3d/untitled.obj" mtl="/static/3d/untitled.mtl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" @on-click="changeColor" />
             <el-button type="primary" @click="changeModel('3d')">返回整体</el-button>
           </div>
+          <div v-else-if="model === 'dll'" style="height: 100%;">
+            <!-- <model-fbx src="/static/3d/file8.fbx" :background-alpha="0" style="height: 90%" @on-load="loading = false" @click="changeModel('zhishi')" /> -->
+            <model-obj src="/static/3d/gu.obj" mtl="/static/3d/gu.mtl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" @on-click="changeColor" />
+            <el-button type="primary" @click="changeModel('3d')">返回整体</el-button>
+          </div>
+          <div v-else-if="model === 'tuoluo'" style="height: 100%;">
+            <!-- <model-fbx src="/static/3d/file8.fbx" :background-alpha="0" style="height: 90%" @on-load="loading = false" @click="changeModel('zhishi')" /> -->
+            <model-obj src="/static/3d/tuoluo.obj" mtl="/static/3d/tuoluo.mtl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" @on-click="changeColor" />
+            <el-button type="primary" @click="changeModel('3d')">返回整体</el-button>
+          </div>
         </div>
       </div>
     </el-col>
@@ -531,13 +541,13 @@ export default {
   watch: {
     failStatus: {
       handler(newVal) {
+        console.log(this.$refs['tuoluo'].object.children)
+        const fanban = this.$refs['tuoluo'].object.children.find(c => c.name === 'Ay_柱体.004')
         if (newVal) {
-          const fanban = this.$refs['3dModel'].object.children.find(c => c => c.name === 'Box11_网格.004')
           fanban.material.color.b = 0.47347
           fanban.material.color.g = 0.47347
           fanban.material.color.r = 0.96078
         } else {
-          const fanban = this.$refs['3dModel'].object.children.find(c => c => c.name === 'Box11_网格.004')
           fanban.material.color.b = 0.716814
           fanban.material.color.g = 0.433347
           fanban.material.color.r = 0.201419
@@ -548,11 +558,6 @@ export default {
   methods: {
     changeColor(e) {
       console.log(e)
-      const a = e.object.parent.children.find(c => c.name === 'revlv_2_网格.129')
-      console.log(a)
-      a.material.color.b = 0
-      a.material.color.g = 0
-      a.material.color.r = 255
       const b = e.object.parent.children.find(c => c.name === 'Box11_网格.004')
       b.material.color.b = 0
       b.material.color.g = 255
@@ -563,6 +568,10 @@ export default {
         this.changeModel('xingmin')
       } else if (name === '太阳帆板') {
         this.changeModel('3d')
+      } else if (name === '动量轮') {
+        this.changeModel('dll')
+      } else if (name === '光纤陀螺') {
+        this.changeModel('tuoluo')
       }
     },
     changeModel(model) {
