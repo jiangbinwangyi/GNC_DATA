@@ -69,7 +69,19 @@ header {
       font-size: 0.25rem;
       font-weight: normal;
       background: linear-gradient(#152b5a, #071d4c);
-      padding-left: .2rem;
+      padding: 0 .2rem;
+      .ctrl{
+        float: right;
+      }
+      .switch{
+        .el-switch__label{
+          color: #fff;
+          font-size: 12px;
+          &.is-active{
+            color: #32f4fe;
+          }
+        }
+      }
     }
     .main{
       height: calc(100% - .65rem);

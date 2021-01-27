@@ -9,16 +9,38 @@
       </el-col>
       <el-col :span="10" class="timeBox">
         <div class="panel pie" style="height: 5rem;">
-          <h2>飞行器星下点轨迹</h2>
-          <div class="main" style="padding: 0">
-            <img src="@/assets/images/guiji2.png" style="width: 100%; height: auto;">
-            <img src="static/globe/satell.svg" style="position: absolute; top: -10%; right: 19%; width: 20px" alt="">
+          <h2>
+            飞行器星下点轨迹
+            <div class="ctrl switch">
+              <el-switch
+                v-model="xingxiadian"
+                active-text="卫星图"
+                inactive-text="示意图"
+              />
+            </div>
+          </h2>
+          <div class="main" style="padding: 0;position: relative">
+            <div>
+              <transition name="el-fade-in-linear">
+                <img v-show="xingxiadian" src="@/assets/images/guiji3.png" style="width: 100%; height: auto;">
+              </transition>
+              <transition name="el-fade-in-linear">
+                <img v-show="!xingxiadian" src="@/assets/images/guiji2.png" style="width: 100%; height: auto;">
+              </transition>
+            </div>
+            <img src="@/assets/images/guiji1.png" style="width: 100%; height: auto;position: absolute;left:0;top:0">
+            <img src="static/globe/satell.svg" style="position: absolute; top: 25%; left: 33%; width: 5%" alt="">
           </div>
         </div>
       </el-col>
       <el-col :span="7">
         <div class="panel pie" style="height: 5rem">
-          <h2 style="float: none; clear: both">飞行器实时运行影像</h2>
+          <h2 style="float: none; clear: both">
+            飞行器实时运行影像
+            <div class="ctrl full">
+              <el-button icon="el-icon-full-screen" type="text">放大</el-button>
+            </div>
+          </h2>
           <div class="main">
             <video src="@/assets/video.mp4" autoplay loop muted width="100%" height="100%" />
           </div>
@@ -48,7 +70,7 @@
         <div class="panel relationBox" style="overflow:hidden">
           <h2>飞行器实时动作显示</h2>
           <div class="main">
-            <model-obj src="/static/3d/file12.obj" mtl="/static/3d/file12.mtl" :rotation="rotation" :scale="{ x: 1.6, y: 1.6, z: 1.6 }" :background-alpha="0" @on-load="modelOnLoad" />
+            <model-obj ref="model3d" src="/static/3d/file12.obj" mtl="/static/3d/file12.mtl" :rotation="rotation" :background-alpha="0" @on-load="modelOnLoad()" />
           </div>
         </div>
       </el-col>
@@ -102,11 +124,11 @@
           </el-col>
           <el-col :span="12">
             <h3>实时数据检测</h3>
-            <v-chart
+            <!-- <v-chart
               :options="mapOption"
               autoresize
               style="height: 5rem;width:100%;position:relative;"
-            />
+            /> -->
           </el-col>
         </el-row>
       </div>
@@ -115,7 +137,8 @@
 </template>
 
 <script>
-import 'three'
+import * as Three from 'three'
+// import 'three'
 import { ModelObj } from 'vue-3d-model'
 import { mapState } from 'vuex'
 
@@ -135,6 +158,8 @@ export default {
   data() {
     return {
       visibleShow: false,
+      xingxiadian: false,
+      model3d: [],
       part: [{
         name: '太阳帆板',
         pic: '/static/part/tyfb.png',
@@ -179,8 +204,8 @@ export default {
           baseTexture: '/static/globe/world.topo.bathy.200401.jpg',
           displacementQuality: 'medium',
           viewControl: {
-            autoRotateSpeed: 0.5,
-            targetCoord: [50, 0] // 北京坐标
+            autoRotateSpeed: 0.01,
+            targetCoord: [115, 30] // 北京坐标
           }
         }
       },
@@ -229,12 +254,22 @@ export default {
       }
     },
     modelOnLoad() {
+      this.model3d = this.$refs['model3d'].object.children.filter(c => [
+        'Box10_网格', 'Rectangle15_网格.001', 'Line11_网格.002',
+        'Box11_网格.004', 'Line12_网格.006', 'Rectangle16_网格.005'
+      ].indexOf(c.name) > -1)
+      console.log(this.model3d[0])
       this.rotate()
     },
     rotate() {
       this.rotation.y += 0.003
       this.rotation.z += 0.001
       this.rotation.x += 0.001
+      this.model3d.map(c => {
+        // console.log(c)
+        c.rotateOnAxis(new Three.Vector3(0, 0, 1), 0.001)
+        // c.rotation.z += 0.1
+      })
       requestAnimationFrame(this.rotate)
     }
   }

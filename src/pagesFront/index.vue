@@ -89,7 +89,7 @@ export default {
     },
     getNowTime() {
       let t = null
-      let count = -4
+      // let count = -4
       const time = () => {
         clearTimeout(t)
         const dt = new Date()
@@ -113,15 +113,15 @@ export default {
         //       starTime: { value: '11-1-4 18:29:5' },
         //       fault: '星箭分离66s左右，双太阳翼未展开',
         //       ErrDes: '太阳翼帆板未展开，会导致蓄电池过放电，任务可能失败。\n严重程度：严重',
-        //       ErrHarm: 'N01009+Y 太阳翼帆板信号故障指示',
-        //       Situation: '1、 发K2“火工品母线通”\n2、 发K1“火工品起爆”\n若指令无效，向上级请示命令'
+        //       ErrHarm: 'N01009+Y太阳翼帆板信号故障指示',
+        //       Situation: '1、发K2“火工品母线通”\n2、发K1“火工品起爆”\n若指令无效，向上级请示命令'
         //     }]
         //   })
         // } else if (count % 8 === 0) {
         //   this.setFailStatus(false)
         // }
         // this.setBarData()
-        count ++
+        // count++
         t = setTimeout(time, 2000)
       }
       t = setTimeout(time, 2000)
