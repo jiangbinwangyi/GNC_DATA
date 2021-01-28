@@ -27,6 +27,8 @@
               <span>处置建议</span>
               <p>1、 发K2“火工品母线通”<br>2、 发K1“火工品起爆”<br>若指令无效，向上级请示命令</p>
             </div>
+            <div class="gzLine1" />
+            <div class="gzLine2" />
             <!-- <video src="@/assets/video2.mp4" autoplay loop width="auto" height="100%" style="margin-left: -20%" /> -->
             <model-obj ref="3dModel" src="/static/3d/file12.obj" mtl="/static/3d/file12.mtl" :scale="{ x: 1.1, y: 1.1, z: 1.1 }" :rotation="rotation" :background-alpha="0" style="height: 100%" @on-load="loading = false" />
           </div>
