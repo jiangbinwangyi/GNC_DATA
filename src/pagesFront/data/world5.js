@@ -269,7 +269,7 @@ var convertData = function(data) {
   return res
 }
 
-var color = ['#247af5', '#F57474', '#F8B448', '#83f574', '#56D0E3']
+var color = ['#247af5', '#F57474', '#fbbe2f', '#24cf43', '#56D0E3']
 var series = [];
 [
   ['China', ChinaData],

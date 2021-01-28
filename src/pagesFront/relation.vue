@@ -1,22 +1,13 @@
 <template>
   <!-- 页面主体 -->
   <el-row style="width: 100%" :gutter="20" class="relationBox">
-    <el-col :span="6">
-      <div class="panel">
-        <h2>遥测信号箱线图分析</h2>
-        <v-chart :options="barOption" class="echartBox" />
-      </div>
-      <div class="panel">
-        <h2>遥测信号包络分析</h2>
-        <v-chart :options="pieOption" class="echartBox" />
-      </div>
-    </el-col>
-    <el-col :span="12">
+    <el-col :span="16">
       <!-- 地图模块 -->
-      <div class="panel" style="height: 1rem">
-        <el-form label-width="120px">
-          <el-form-item label="选择遥测参数">
-            <el-select v-model="metaValue" style="width: 100%" @change="setOptionMain">
+      <div class="panel map" style="height: 7.8rem;margin-bottom: .3rem">
+        <h2>
+          遥测信号时域分析
+          <div class="ctrl">
+            <el-select v-model="metaValue" size="mini" style="display:inline-block;margin-right: .2rem" @change="setOptionMain">
               <el-option
                 v-for="item in metaList"
                 :key="item.metaColumnId"
@@ -24,59 +15,61 @@
                 :value="item.metaColumnId"
               />
             </el-select>
-          </el-form-item>
-        </el-form>
+            <span style="font-size: .16rem;color: #0091ff"><i class="el-icon-s-order" /> 统计量 </span>
+            <el-switch
+              v-model="xingxiadian"
+              style="display:inline-block;margin-right: .2rem"
+              @change="setCount"
+            />
+            <span style="font-size: .16rem;color: #fbbe2f"><i class="el-icon-warning" /> 异常检测 </span>
+            <el-switch
+              v-model="isWarning"
+              active-color="#fbbe2f"
+              style="display:inline-block;margin-right: .2rem"
+              @change="setWarning"
+            />
+            <span style="font-size: .16rem;color: #24cf43"><i class="el-icon-s-marketing" /> 拟合比对 </span>
+            <el-switch
+              v-model="isSmooth"
+              active-color="#24cf43"
+              style="display:inline-block"
+              @change="setSmooth"
+            />
+          </div>
+        </h2>
+        <v-chart :options="optionMain" style="height: 100%;" autoresize class="echartBox" />
       </div>
-      <div class="panel map" style="height: 10.3rem">
-        <h2>遥测信号时域分析</h2>
-        <v-chart :options="optionMain" style="height: 70%;" autoresize class="echartBox" />
-        <h3 style="font-size: .22rem; text-align: center; color: #fff; margin: .5rem 0 .3rem">统计量</h3>
-        <el-table
-          border
-          fit
-          :data="tableList"
-          highlight-current-row
-          style="width: 100%;"
-          class="tableData"
-        >
-          <el-table-column prop="Max" label="最大值" />
-          <el-table-column prop="Min" label="最小值" />
-          <el-table-column prop="Average" label="平均值" />
-          <el-table-column prop="Variance" label="方差" />
-          <el-table-column prop="MeanSquare" label="均方差" />
-          <el-table-column prop="StandardDeviation" label="均方根" />
-          <el-table-column prop="lowerquantile" label="1/4分位数" />
-          <el-table-column prop="Median" label="中位数" />
-          <el-table-column prop="upperquantile" label="3/4分位数" />
-          <el-table-column prop="AccumulativeTotal" label="累计数" />
-        </el-table>
-      </div>
-    </el-col>
-    <el-col :span="6">
-      <div class="panel">
-        <h2>遥测信号FFT分析</h2>
+      <div class="panel" style="height: 3.75rem">
+        <h2>平滑FFT分析</h2>
         <v-chart :options="barOption2" class="echartBox" />
       </div>
-      <div class="panel">
-        <h2>遥测信号历史数据分析</h2>
-        <p style="font-size: 14px; color: #ccc; text-align: center; line-height: 1; padding-top: 10px">时间：8546.666</p>
-        <v-chart :options="barOption5" class="echartBox" style="margin: 0; padding: 0" />
+    </el-col>
+    <el-col :span="8">
+      <div class="panel" style="height: 3.75rem; margin-bottom: .3rem">
+        <h2>一阶差分分析</h2>
+        <v-chart :options="barOption3" class="echartBox" />
+      </div>
+      <div class="panel" style="height: 3.75rem; margin-bottom: .3rem">
+        <h2>移动方差分析</h2>
+        <v-chart :options="barOption4" class="echartBox" />
+      </div>
+      <div class="panel" style="height: 3.75rem">
+        <h2>小波包分解系数能量</h2>
+        <v-chart :options="barOption5" class="echartBox" />
       </div>
     </el-col>
   </el-row>
 </template>
 
 <script>
-import { getTelemetrySample, getTimeDomainResult, getFFTMainResult } from '@/api/dataChart/index'
 import { mapMutations, mapState } from 'vuex'
 
-import dataTool from 'echarts/extension/dataTool'
 import ECharts from 'vue-echarts'
 import 'echarts'
 import 'echarts-gl'
 import 'element-ui'
 
-// import china from './china.js'
+// import china from './china.js244'
 // ECharts.registerMap('china', china)
 import chinaMap from './china.json'
 ECharts.registerMap('china', chinaMap)
@@ -96,218 +89,48 @@ export default {
     'v-chart': ECharts
   },
   data() {
-    const myColor = ['#247af5', '#83f574', '#56D0E3', '#F8B448', '#F57474']
+    const myColor = ['#247af5', '#24cf43', '#56D0E3', '#fbbe2f', '#F57474']
 
     return {
+      isSmooth: false,
+      isWarning: false,
+      xingxiadian: false,
+      dataJson: [],
       tableList: [],
-      metaValue: '5419',
+      metaValue: '290',
       metaList: [{
-        metaColumnId: '5419',
-        metaColumnName: 'SQL_SBX'
+        metaColumnId: '289',
+        metaColumnName: '陀螺X零偏'
       }, {
-        metaColumnId: '5422',
-        metaColumnName: 'SQL_SBZ'
+        metaColumnId: '290',
+        metaColumnName: '陀螺Y零偏'
       }, {
-        metaColumnId: '5423',
-        metaColumnName: 'SQL_EBY'
+        metaColumnId: '291',
+        metaColumnName: '陀螺Z零偏'
       }, {
-        metaColumnId: '5426',
-        metaColumnName: 'SQL_EBX'
+        metaColumnId: '292',
+        metaColumnName: '动量轮X轴承温度'
       }, {
-        metaColumnId: '5427',
-        metaColumnName: 'SQL_EBZ'
+        metaColumnId: '294',
+        metaColumnName: '动量轮Y轴承温度'
       }, {
-        metaColumnId: '5428',
-        metaColumnName: 'SQL_X'
-      }],
-      formInline: {
-        metaColumnIds: '5419',
-        teststartTime: '2000-10-21T00:52:02.000Z',
-        testendTime: '2020-10-20T01:52:02.000Z',
-        sampleNum: 888
-      },
-      barOption5: {
-        tooltip: {},
-        visualMap: {
-          max: 60,
-          show: false,
-          inRange: { color: myColor }
-        },
-        xAxis3D: {
-          type: 'category',
-          name: '',
-          nameTextStyle: {
-            color: '#fff'
-          },
-          axisLabel: {
-            color: '#fff'
-          },
-          data: (() => {
-            const arr = []
-            for (let i = 1; i < 25; i++) {
-              arr.push('信号' + i)
-            }
-            return arr
-          })()
-        },
-        yAxis3D: {
-          type: 'category',
-          name: '',
-          axisLabel: {
-            color: '#fff'
-          },
-          data: ['信号A', '信号B', '信号C', '信号D', '信号E', '信号F', '信号G']
-        },
-        zAxis3D: {
-          type: 'value',
-          name: '信号值',
-          nameTextStyle: {
-            color: '#fff',
-            fontSize: 12
-          },
-          axisLabel: {
-            color: '#fff'
-          },
-          max: 60
-        },
-        grid3D: {
-          top: '-10%',
-          boxWidth: 150,
-          boxDepth: 60,
-          viewControl: {
-            distance: 200,
-            alpha: 10,
-            beta: 20
-          }
-        },
-        series: [{
-          type: 'bar3D',
-          data: this.$store.state.first.barData,
-          shading: 'lambert',
-          label: {
-            textStyle: {
-              fontSize: 16,
-              borderWidth: 1
-            }
-          }
-        }]
-      },
-      tableData: [{
-        date: '1',
-        name: '星敏Vx',
-        address: '星敏',
-        result: '严重',
-        method: '调试XXX'
-      }, {
-        date: '2',
-        name: '星敏Vy',
-        address: '星敏',
-        result: '严重',
-        method: '调试XXX'
-      }, {
-        date: '3',
-        name: '星敏Vz',
-        address: '星敏',
-        result: '严重',
-        method: '调试XXX'
-      }, {
-        date: '4',
-        name: '矫正时间',
-        address: '星敏',
-        result: '一般',
-        method: '调试XXX'
+        metaColumnId: '296',
+        metaColumnName: '动量轮Z轴承温度'
       }],
       nowTime: '',
       count: {
         total: 235411
       },
-      barOption: null,
+      barOption4: null,
       pieOption: null,
       barOption2: null,
-      barOption3: {
-        xAxis: {
-          type: 'category',
-          axisLabel: {
-            color: '#fff'
-          },
-          data: ['11-1', '11-2', '11-3', '11-4', '11-5', '11-6', '11-7', '11-8', '11-9', '11-10', '11-11', '11-12']
-        },
-        yAxis: {
-          type: 'value',
-          axisLabel: {
-            color: '#fff'
-          }
-        },
-        series: [{
-          data: [820, 932, 901, 934, 1290, 1330, 1320, 1420, 1589, 1656, 1703, 1905],
-          type: 'line',
-          smooth: true
-        }, {
-          data: [820, 932, 901, 934, 1290, 1330, 1320, 1420, 1589, 1656, 1703, 1905],
-          type: 'line'
-        }]
-      },
-      lineOption2: {
-        title: {
-          text: '各部件健康指标分析',
-          textStyle: {
-            color: '#fff'
-          },
-          left: 'center'
-        },
-        tooltip: {},
-        radar: {
-          center: ['50%', '65%'],
-          radius: 65,
-          name: {
-            textStyle: {
-              color: '#fff'
-            }
-          },
-          splitArea: {
-            areaStyle: {
-              color: ['rgba(114, 172, 209, 0.2)'],
-              shadowColor: 'rgba(0, 0, 0, 0.3)',
-              shadowBlur: 10
-            }
-          },
-          axisLine: {
-            lineStyle: {
-              color: 'rgba(255, 255, 255, 0.2)'
-            }
-          },
-          splitLine: {
-            lineStyle: {
-              color: 'rgba(255, 255, 255, 0.2)'
-            }
-          },
-          indicator: [
-            { name: '帆板', max: 6500 },
-            { name: '惯性姿态敏感器', max: 16000 },
-            { name: '星敏感器', max: 30000 },
-            { name: '陀螺', max: 38000 },
-            { name: '动量轮', max: 52000 }
-          ]
-        },
-        series: [{
-          type: 'radar',
-          // areaStyle: {normal: {}},
-          data: [
-            {
-              value: [4300, 10000, 28000, 35000, 50000, 19000],
-              name: '各部件故障态势',
-              itemStyle: {
-                color: myColor[0]
-              },
-              areaStyle: {}
-            }
-          ]
-        }]
-      },
+      barOption3: null,
+      barOption5: null,
       optionDefault: {
         xAxis: {
           name: '信号',
           data: [],
+          boundaryGap: false,
           axisTick: {
             show: false
           },
@@ -315,6 +138,12 @@ export default {
             color: '#fff'
           }
         },
+        grid: [{
+          left: 50,
+          right: 70,
+          bottom: '16%',
+          containLabel: true
+        }],
         color: myColor,
         tooltip: {
           // formatter(params) {
@@ -353,7 +182,7 @@ export default {
           type: 'line',
           animationDuration: 2800,
           animationEasing: 'cubicInOut',
-          smooth: true,
+          smooth: false,
           data: []
         }]
       },
@@ -364,98 +193,227 @@ export default {
     ...mapState('first', ['basicData'])
   },
   created() {
-    this.setBarData()
-    this.formInline.metaColumnIds = this.metaList.map(e => e.metaColumnId)
-    this.getTimeDomainResult(this.formInline).then(res => {
-      this.dataList = res
+    // this.setBarData()
+    // this.formInline.metaColumnIds = this.metaList.map(e => e.metaColumnId)
+    this.getData().then(res => {
+      console.log(res)
+      this.dataJson = res
       this.setOptionMain()
     })
+    // this.getTimeDomainResult(this.formInline).then(res => {
+    //   this.dataList = res
+    //   this.setOptionMain()
+    // })
   },
   methods: {
+    setSmooth() {
+      if (this.isSmooth) {
+        const warningOption = JSON.parse(JSON.stringify(this.optionMain))
+        warningOption.series[0].smooth = true
+        this.optionMain = warningOption
+      } else {
+        const warningOption = JSON.parse(JSON.stringify(this.optionMain))
+        warningOption.series[0].smooth = false
+        this.optionMain = warningOption
+      }
+    },
+    setCount() {
+      if (this.xingxiadian) {
+        const warningOption = JSON.parse(JSON.stringify(this.optionMain))
+        warningOption.series[0].markLine = {
+          silent: true,
+          precision: 8,
+          data: [{
+            type: 'max',
+            name: '最大值',
+            lineStyle: {
+              color: '#F57474'
+            }
+          }, {
+            type: 'min',
+            name: '最小值',
+            lineStyle: {
+              color: '#F57474'
+            }
+          }, {
+            type: 'average',
+            name: '平均值',
+            lineStyle: {
+              color: '#24cf43'
+            }
+          }]
+        }
+        this.optionMain = warningOption
+      } else {
+        const warningOption = JSON.parse(JSON.stringify(this.optionMain))
+        warningOption.series[0].markLine = {
+          silent: true,
+          precision: 8,
+          data: []
+        }
+        this.optionMain = warningOption
+      }
+    },
+    setWarning() {
+      if (this.isWarning) {
+        const warningOption = JSON.parse(JSON.stringify(this.optionMain))
+        warningOption.visualMap = {
+          show: false,
+          dimension: 0,
+          pieces: [{
+            lte: 100,
+            color: '#0091ff'
+          }, {
+            gt: 100,
+            lte: 200,
+            color: '#fbbe2f'
+          }, {
+            gt: 200,
+            color: '#0091ff'
+          }]
+        }
+        warningOption.series[0].markArea = {
+          itemStyle: {
+            color: 'rgba(245, 116, 116, 0.1)'
+          },
+          data: [[{
+            name: '异常部分',
+            xAxis: this.optionMain.xAxis.data[100]
+          }, {
+            xAxis: this.optionMain.xAxis.data[200]
+          }]]
+        }
+        this.optionMain = warningOption
+      } else {
+        const warningOption = JSON.parse(JSON.stringify(this.optionMain))
+        warningOption.visualMap = {
+          show: false,
+          dimension: 0,
+          pieces: [{
+            lte: 100,
+            color: '#0091ff'
+          }, {
+            gt: 100,
+            lte: 200,
+            color: '#0091ff'
+          }, {
+            gt: 200,
+            color: '#0091ff'
+          }]
+        }
+        warningOption.series[0].markArea = {
+          itemStyle: {
+            color: 'rgba(245, 116, 116, 0)'
+          },
+          data: []
+        }
+        this.optionMain = warningOption
+      }
+    },
     setOptionMain() {
-      this.formInline.metaColumnIds = [this.metaValue]
-      this.getTelemetrySample(this.formInline).then(response => {
+      this.getTelemetrySample(this.metaValue).then(response => {
         // 时域分析
         const newSetOption = JSON.parse(JSON.stringify(this.optionDefault))
-        response[0].tdata.forEach(e => {
+        response.forEach(e => {
           newSetOption.xAxis.data.push(Object.keys(e)[0])
           newSetOption.series[0].data.push(Object.values(e)[0])
         })
         this.optionMain = newSetOption
-        // 包络分析
-        const limitOption = JSON.parse(JSON.stringify(newSetOption))
-        limitOption.series[0].markLine = {
-          silent: true,
-          precision: 8,
-          lineStyle: {
-            color: '#F57474'
-          },
-          data: [{
-            type: 'max',
-            name: '最大值'
-          }, {
-            type: 'min',
-            name: '最小值'
-          }]
-        }
-        this.pieOption = limitOption
+
+        // 一阶
+        const newSetOption2 = JSON.parse(JSON.stringify(this.optionMain))
+        newSetOption2.series[0].data = this.optionMain.series[0].data.map((e, i) => {
+          if (i <= 110) {
+            return (parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1
+          } else if (i > 110 && i < 156) {
+            return (parseFloat(Math.random().toFixed(2)) * 8 + 7) / 50 - 10
+          } else if (i >= 156 && i < 360) {
+            return (parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1
+          } else if (i >= 360 && i < 420) {
+            return (parseFloat(Math.random().toFixed(2)) * 8 + 7) / 50 - 10
+          } else if (i >= 420 && i < 600) {
+            return (parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1
+          } else if (i >= 600 && i < 650) {
+            return (parseFloat(Math.random().toFixed(2)) * 8 + 7) / 50 - 10
+          } else {
+            return (parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1
+          }
+        })
+        newSetOption2.grid[0].bottom = '22%'
+        this.barOption3 = newSetOption2
+        // 移动方差
+        const newSetOption3 = JSON.parse(JSON.stringify(this.optionMain))
+        newSetOption3.series[0].data = this.optionMain.series[0].data.map((e, i) => {
+          if (i <= 110) {
+            return -((parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1)
+          } else if (i > 110 && i < 156) {
+            return -((parseFloat(Math.random().toFixed(2)) * 8 + 7) / 50 - 10)
+          } else if (i >= 156 && i < 360) {
+            return -((parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1)
+          } else if (i >= 360 && i < 420) {
+            return -((parseFloat(Math.random().toFixed(2)) * 8 + 7) / 50 - 10)
+          } else if (i >= 420 && i < 600) {
+            return -((parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1)
+          } else if (i >= 600 && i < 650) {
+            return -((parseFloat(Math.random().toFixed(2)) * 8 + 7) / 50 - 10)
+          } else {
+            return -((parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1)
+          }
+        })
+        newSetOption3.grid[0].bottom = '22%'
+        this.barOption4 = newSetOption3
+
+        const newSetOption4 = JSON.parse(JSON.stringify(this.optionDefault))
+        newSetOption4.xAxis.data = [1, 2, 3, 4, 5, 6, 7]
+        newSetOption4.series[0].type = 'bar'
+        const d = this.metaList.findIndex(e => e.metaColumnId === this.metaValue)
+        const num1 = d * 80 + 1500
+        const num2 = d * 30 + 200
+        const num3 = d * 3 + 12
+        newSetOption4.series[0].data = [num1, num2, num3, 1, 1, 0, 0]
+        newSetOption4.grid[0].bottom = '22%'
+        newSetOption4.xAxis.boundaryGap = true
+        this.barOption5 = newSetOption4
       })
       // 频域分析
-      this.getFFTMainResult(this.formInline).then(response => {
+      this.getFFTMainResult().then(response => {
+        const dataList = response.find(e => e.metaColumnId === this.metaValue)
         const newSetOption = JSON.parse(JSON.stringify(this.optionDefault))
-        response.forEach(e => {
-          newSetOption.xAxis.data = Object.keys(e.FrequencyAmplitude)
-          newSetOption.series[0].data = Object.values(e.FrequencyAmplitude)
-        })
+        console.log(dataList)
+        newSetOption.xAxis.data = Object.keys(dataList.FrequencyAmplitude)
+        newSetOption.series[0].data = Object.values(dataList.FrequencyAmplitude)
+        newSetOption.grid[0].bottom = '20%'
         this.barOption2 = newSetOption
       })
-      // 统计量
-      this.tableList = [this.dataList.find(e => e.metaColumnId === this.metaValue)]
-      // 箱线图
-      const boxOption = JSON.parse(JSON.stringify(this.optionDefault))
-      const boxData = []
-      for (let i = 0; i < 1; i++) {
-        boxData.push([
-          this.dataList[i].Min,
-          this.dataList[i].Max,
-          this.dataList[i].Median,
-          this.dataList[i].lowerquantile,
-          this.dataList[i].upperquantile
-        ])
-        boxOption.xAxis.data.push(this.metaList[i].metaColumnName)
-      }
-      boxOption.series[0].type = 'boxplot'
-      boxOption.series[0].data = dataTool.prepareBoxplotData(boxData).boxData
-      this.barOption = boxOption
+    },
+    getData() {
+      return new Promise((resolve, reject) => {
+        const data = require('./data.json')
+        console.log(data)
+        resolve(data)
+      })
     },
     // 获取遥测工程值数据
-    getTelemetrySample(data) {
+    getTelemetrySample(id) {
       return new Promise((resolve, reject) => {
-        getTelemetrySample(data).then(response => {
-          resolve(response.data)
-        }).catch(() => {
-          reject(false)
-        })
+        const data = this.dataJson.find(e => {
+          return e.metaColumnId === id
+        }).tdata
+        console.log(222222222, data)
+        resolve(data)
       })
     },
     // 时域分析返回数据
-    getTimeDomainResult(data) {
-      return new Promise((resolve, reject) => {
-        getTimeDomainResult(data).then(response => {
-          resolve(response.data)
-        }).catch(() => {
-          reject(false)
-        })
-      })
+    getTimeDomainResult(id) {
+      this.dataList = this.dataJson.find(e => {
+        return e.metaColumnId === id
+      }).tdata
     },
     // 获取主要的FFT值
-    getFFTMainResult(data) {
+    getFFTMainResult() {
       return new Promise((resolve, reject) => {
-        getFFTMainResult(data).then(response => {
-          resolve(response.data)
-        }).catch(() => {
-          reject(false)
-        })
+        const data = require('./data2.json')
+        resolve(data)
       })
     },
     ...mapMutations('first', ['setBasicData', 'setBarData'])

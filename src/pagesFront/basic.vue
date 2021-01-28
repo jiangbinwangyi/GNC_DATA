@@ -1,14 +1,9 @@
 <template>
   <!-- 页面主体 -->
   <div class="basicBox" style="width: 100%">
-    <el-row style="margin-bottom: .28rem" :gutter="20">
-      <el-col :span="7">
-        <div class="panel bar" style="height: 5rem">
-          <h2>飞行器实时健康状态</h2>
-        </div>
-      </el-col>
-      <el-col :span="10" class="timeBox">
-        <div class="panel pie" style="height: 5rem;">
+    <el-row :gutter="20">
+      <el-col :span="7" class="timeBox">
+        <div class="panel pie" style="height: 5rem;margin-bottom: .28rem">
           <h2>
             飞行器星下点轨迹
             <div class="ctrl switch">
@@ -19,8 +14,8 @@
               />
             </div>
           </h2>
-          <div class="main" style="padding: 0;position: relative">
-            <div>
+          <div class="main" style="padding: 0.5rem 0;position: relative">
+            <div style="height: 100%; overflow:hidden">
               <transition name="el-fade-in-linear">
                 <img v-show="xingxiadian" src="@/assets/images/guiji3.png" style="width: 100%; height: auto;">
               </transition>
@@ -28,27 +23,10 @@
                 <img v-show="!xingxiadian" src="@/assets/images/guiji2.png" style="width: 100%; height: auto;">
               </transition>
             </div>
-            <img src="@/assets/images/guiji1.png" style="width: 100%; height: auto;position: absolute;left:0;top:0">
-            <img src="static/globe/satell.svg" style="position: absolute; top: 25%; left: 33%; width: 5%" alt="">
+            <img src="@/assets/images/guiji1.png" style="width: 100%; height: auto;position: absolute;left:0;top:0.5rem">
+            <img src="static/globe/satell.svg" style="position: absolute; top: 35%; left: 33%; width: 5%" alt="">
           </div>
         </div>
-      </el-col>
-      <el-col :span="7">
-        <div class="panel pie" style="height: 5rem">
-          <h2 style="float: none; clear: both">
-            飞行器实时运行影像
-            <div class="ctrl full">
-              <el-button icon="el-icon-full-screen" type="text">放大</el-button>
-            </div>
-          </h2>
-          <div class="main">
-            <video src="@/assets/video.mp4" autoplay loop muted width="100%" height="100%" />
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-    <el-row style="width: 100%" :gutter="20">
-      <el-col :span="7">
         <div class="panel" style="height: 6.5rem">
           <h2>飞行器运行轨道实时显示</h2>
           <div class="main map">
@@ -67,7 +45,33 @@
         </div>
       </el-col>
       <el-col :span="10">
-        <div class="panel relationBox" style="overflow:hidden">
+        <div class="panel bar" style="height: 3.5rem;margin-bottom: .28rem">
+          <div class="main" style="height: 100%">
+            <el-row style="height: 100%">
+              <el-col :span="12">
+                <el-button type="text" style="height: auto">
+                  <i class="el-icon-message-solid" style="font-size: .4rem;vertical-align: -2px;" />
+                  <span style="font-size: .3rem">实时故障警报</span>
+                </el-button>
+                <div class="jingbao">
+                  <img src="@/assets/images/xinhao_gray.png" alt="">
+                  <img src="@/assets/images/xinhao_gray.png" alt="">
+                  <img src="@/assets/images/xinhao_gray.png" alt="">
+                  <img src="@/assets/images/xinhao_gray.png" alt="">
+                  <img src="@/assets/images/xinhao_green.png" alt="">
+                </div>
+              </el-col>
+              <el-col :span="12" style="height: 100%">
+                <v-chart
+                  :options="mapOption3"
+                  autoresize
+                  style="height: 100%;width:100%"
+                />
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+        <div class="panel relationBox" style="overflow:hidden; height: 8rem">
           <h2>飞行器实时动作显示</h2>
           <div class="main">
             <model-obj ref="model3d" src="/static/3d/file12.obj" mtl="/static/3d/file12.mtl" :rotation="rotation" :background-alpha="0" @on-load="modelOnLoad()" />
@@ -75,6 +79,17 @@
         </div>
       </el-col>
       <el-col :span="7">
+        <div class="panel pie" style="height: 5rem;margin-bottom: .28rem">
+          <h2 style="float: none; clear: both">
+            飞行器实时运行影像
+            <div class="ctrl full">
+              <el-button icon="el-icon-full-screen" type="text">放大</el-button>
+            </div>
+          </h2>
+          <div class="main">
+            <video src="@/assets/video.mp4" autoplay loop muted width="100%" height="100%" />
+          </div>
+        </div>
         <div class="panel line2" style="height: 6.5rem">
           <h2 style="float: none; clear: both">飞行器实时运行信息</h2>
           <el-table :data="tableData" :row-class-name="isError">
@@ -157,6 +172,73 @@ export default {
   },
   data() {
     return {
+      mapOption3: {
+        tooltip: {
+          formatter: '{a} <br/>{c} {b}'
+        },
+        series: [
+          {
+            name: '速度',
+            type: 'gauge',
+            z: 3,
+            min: 0,
+            max: 100,
+            center: ['50%', '55%'],
+            radius: '100%',
+            itemStyle: {
+              color: '#FFAB91'
+            },
+            title: {
+              offsetCenter: [0, '70%'],
+              fontSize: 20,
+              color: '#fff'
+            },
+            axisLine: {
+              lineStyle: {
+                width: 3,
+                shadowColor: '#fff',
+                shadowBlur: 5,
+                color: [[0.1, '#F57474'], [0.25, '#fbbe2f'], [0.7, '#0091ff'], [0.85, '#56D0E3'], [1, '#24cf43']]
+              }
+            },
+            axisTick: {
+              length: 15,
+              lineStyle: {
+                color: 'auto'
+              }
+            },
+            splitLine: {
+              length: 20,
+              lineStyle: {
+                color: 'auto'
+              }
+            },
+            axisLabel: {
+              backgroundColor: 'auto',
+              borderRadius: 2,
+              color: '#eee',
+              padding: 3,
+              textShadowBlur: 2,
+              textShadowOffsetX: 1,
+              textShadowOffsetY: 1,
+              textShadowColor: '#222'
+            },
+            detail: {
+              // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+              formatter(value) {
+                value = (value + '').split('.')
+                value.length < 2 && (value.push('00'))
+                return ('00' + value[0]).slice(-2) + '.' + (value[1] + '00').slice(0, 2)
+              },
+              offsetCenter: [0, '-30%'],
+              fontWeight: 'bolder',
+              fontFamily: 'Arial',
+              color: 'auto'
+            },
+            data: [{ value: 92.55, name: '健康值' }]
+          }
+        ]
+      },
       visibleShow: false,
       xingxiadian: false,
       model3d: [],
@@ -288,7 +370,7 @@ export default {
     color: #F57474;
   }
   &.table_warning td{
-    color: #F8B448
+    color: #fbbe2f
   }
 }
 .el-table--enable-row-hover .el-table__body tr:hover > td{
@@ -419,6 +501,13 @@ export default {
         background: #F57474;
         // animation: radius 1s ease-out infinite forwards alternate;
       }
+    }
+  }
+  .jingbao{
+    padding: .2rem 0 0 .1rem;
+    img {
+      width: .3rem;
+      margin: 0 2px;
     }
   }
 }

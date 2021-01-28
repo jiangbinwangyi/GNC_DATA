@@ -123,7 +123,7 @@ export default {
     'v-chart': ECharts
   },
   data() {
-    const myColor = ['#415c29', '#F57474', '#56D0E3', '#F8B448', '#83f574']
+    const myColor = ['#415c29', '#F57474', '#56D0E3', '#fbbe2f', '#24cf43']
 
     return {
       activeName: 'second3',

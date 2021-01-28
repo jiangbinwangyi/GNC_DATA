@@ -16,6 +16,7 @@
   padding: 0;
   width: 100%;
   height: 100%;
+  overflow: hidden;
   li {
     list-style: none;
   }
@@ -70,15 +71,16 @@ header {
       font-weight: normal;
       background: linear-gradient(#152b5a, #071d4c);
       padding: 0 .2rem;
+      overflow: hidden;
       .ctrl{
         float: right;
       }
       .switch{
         .el-switch__label{
-          color: #fff;
+          color: #3c4d81;
           font-size: 12px;
           &.is-active{
-            color: #32f4fe;
+            color: #0091ff;
           }
         }
       }

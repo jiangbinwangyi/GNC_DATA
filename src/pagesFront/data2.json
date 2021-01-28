@@ -1,0 +1,128 @@
+[
+  {
+    "metaColumnId": "289",
+    "FrequencyAmplitude": {
+      "0": 0.975184,
+      "1": 0.024803,
+      "2": 0.024766,
+      "3": 0.024705,
+      "4": 0.02462,
+      "5": 0.02451,
+      "6": 0.024377,
+      "7": 0.02422,
+      "8": 0.024039,
+      "9": 0.023836
+    },
+    "FrequencyVariance": 8.25,
+    "MaxFrequency": 9,
+    "MinFrequency": 0,
+    "MaxAmplitude": 0.975184,
+    "MinAmplitude": 0.023836,
+    "CenterFrequency": 0.91386
+  },
+  {
+    "metaColumnId": "290",
+    "FrequencyAmplitude": {
+      "0": 0.308636,
+      "3": 0.250672,
+      "4": 0.052507,
+      "6": 0.13942,
+      "9": 0.111387,
+      "10": 0.050214,
+      "11": 0.050277,
+      "12": 0.050442,
+      "15": 0.065522,
+      "17": 0.049258
+    },
+    "FrequencyVariance": 26.41,
+    "MaxFrequency": 17,
+    "MinFrequency": 0,
+    "MaxAmplitude": 0.308636,
+    "MinAmplitude": 0.049258,
+    "CenterFrequency": 5.567277
+  },
+  {
+    "metaColumnId": "291",
+    "FrequencyAmplitude": {
+      "0": 14880.57731,
+      "1": 399.66944,
+      "2": 744.929363,
+      "3": 8301.628263,
+      "4": 828.547762,
+      "5": 751.725534,
+      "6": 2234.470593,
+      "9": 1185.715167,
+      "11": 412.910341,
+      "12": 512.616266
+    },
+    "FrequencyVariance": 15.61,
+    "MaxFrequency": 12,
+    "MinFrequency": 0,
+    "MaxAmplitude": 14880.57731,
+    "MinAmplitude": 399.66944,
+    "CenterFrequency": 2.268845
+  },
+  {
+    "metaColumnId": "292",
+    "FrequencyAmplitude": {
+      "0": 21592.775951,
+      "2": 1169.727556,
+      "3": 8798.460175,
+      "4": 828.618346,
+      "5": 1096.747069,
+      "6": 2636.993067,
+      "7": 551.535828,
+      "8": 774.642447,
+      "9": 1138.659824,
+      "11": 662.500144
+    },
+    "FrequencyVariance": 10.25,
+    "MaxFrequency": 11,
+    "MinFrequency": 0,
+    "MaxAmplitude": 21592.775951,
+    "MinAmplitude": 551.535828,
+    "CenterFrequency": 2.062343
+  },
+  {
+    "metaColumnId": "294",
+    "FrequencyAmplitude": {
+      "0": 0.145356,
+      "1": 0.008676,
+      "2": 0.008718,
+      "3": 0.064551,
+      "4": 0.007822,
+      "6": 0.022996,
+      "20": 0.009172,
+      "23": 0.007625,
+      "26": 0.008513,
+      "33": 0.007681
+    },
+    "FrequencyVariance": 136.76,
+    "MaxFrequency": 33,
+    "MinFrequency": 0,
+    "MaxAmplitude": 0.145356,
+    "MinAmplitude": 0.007625,
+    "CenterFrequency": 4.199976
+  },
+  {
+    "metaColumnId": "296",
+    "FrequencyAmplitude": {
+      "0": 0.003789,
+      "1": 0.003331,
+      "2": 0.003338,
+      "3": 0.003112,
+      "4": 0.00321,
+      "5": 0.00315,
+      "6": 0.003273,
+      "7": 0.003213,
+      "8": 0.00322,
+      "9": 0.003117
+    },
+    "FrequencyVariance": 8.25,
+    "MaxFrequency": 9,
+    "MinFrequency": 0,
+    "MaxAmplitude": 0.003789,
+    "MinAmplitude": 0.003112,
+    "CenterFrequency": 4.392727
+  }
+]
