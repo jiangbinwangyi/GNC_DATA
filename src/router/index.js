@@ -66,23 +66,22 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/401',
-    component: () => import('@/views/error-page/401'),
-    hidden: true
-  },
-  {
     path: '/',
     component: () => import('@/pagesFront/index'),
     isMenu: false,
-    redirect: '/basic',
+    redirect: '/setting',
     children: [{
+      path: '/setting',
+      component: () => import('@/pagesFront/setting'),
+      meta: { name: '故障系统' }
+    }, {
       path: 'basic',
       component: () => import('@/pagesFront/basic'),
-      meta: { name: '实时数据' }
+      meta: { name: '实时监视' }
     }, {
       path: 'track',
       component: () => import('@/pagesFront/track'),
-      meta: { name: '实时预测' }
+      meta: { name: '故障诊断' }
     }, {
       path: '3Dmodel',
       component: () => import('@/pagesFront/3Dmodel'),
@@ -90,7 +89,7 @@ export const constantRoutes = [
     }, {
       path: 'relation',
       component: () => import('@/pagesFront/relation'),
-      meta: { name: '历史数据' }
+      meta: { name: '检测分析' }
     }]
   },
   {

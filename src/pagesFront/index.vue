@@ -2,10 +2,10 @@
   <div class="myselfData">
     <header>
       <div class="showTime" v-text="nowTime" />
-      <h1>XX飞行器可视化监测分析系统 -
+      <h1>XX飞行器大数据可视化系统 -
         <el-dropdown @command="setMenuActive">
           <span class="el-dropdown-link">
-            <a href="javascript:void(0);" style="font-size: 28px; color:#fff">{{ menuActive }}</a>
+            <a href="javascript:void(0);" style="font-size: .35rem; color:#fff">{{ menuActive }}</a>
             <i class="el-icon-arrow-down el-icon--right" style="font-size: 16px;color:#fff;padding-left:10px" />
           </span>
           <el-dropdown-menu slot="dropdown">
@@ -19,7 +19,9 @@
     </header>
     <!-- 页面主体 -->
     <section class="mainbox">
-      <router-view />
+      <transition name="fade-transform" mode="out-in">
+        <router-view />
+      </transition>
     </section>
     <!-- 全局语音警报 -->
     <audio ref="errorVoice" src="@/assets/xinhao3.mp3" :autoplay="failStatus" loop="loop" />
@@ -69,8 +71,13 @@ export default {
     // this.createWebsocket()
     this.getNowTime()
     this.setBasicData()
-    document.querySelector('html').style.fontSize = (document.documentElement.clientWidth > 1024 ? 1024 : document.documentElement.clientWidth) / 16 + 'px'
+    document.querySelector('html').style.fontSize = document.documentElement.clientWidth / 24 + 'px'
     // this.createWs()
+    window.addEventListener('keypress', (event) => {
+      if (event.code === 'Space') {
+        this.setFailStatus(!this.failStatus)
+      }
+    })
   },
   methods: {
     createWs() {
@@ -89,7 +96,7 @@ export default {
     },
     getNowTime() {
       let t = null
-      // let count = -4
+      let count = -4
       const time = () => {
         clearTimeout(t)
         const dt = new Date()
@@ -104,7 +111,7 @@ export default {
           sunTime: '星时：' + (y - 2010) + '年' + mt + '月' + day + '日 ' + h + '时' + m + '分' + s + '秒'
         })
 
-        // this.setBasicData(count)
+        this.setBasicData(count)
         // if ((count + 6) % 8 === 0) {
         //   this.setFailStatus(true)
         //   this.setGzData({
@@ -120,8 +127,8 @@ export default {
         // } else if (count % 8 === 0) {
         //   this.setFailStatus(false)
         // }
-        // this.setBarData()
-        // count++
+        this.setBarData()
+        count++
         t = setTimeout(time, 2000)
       }
       t = setTimeout(time, 2000)

@@ -8,7 +8,7 @@
   src: url(../assets/front/font/DS-DIGIT.TTF);
 }
 .myselfData {
-  background: #040d2e no-repeat top center;
+  background: #000 no-repeat top center;
   background-size: 100% 100%;
   font-size: 0;
   line-height: 0;
@@ -62,14 +62,14 @@ header {
   margin: 0 auto;
   padding: 0.125rem 0.25rem 0;
   .panel {
-    box-shadow: 0 0 .12rem 0 #182748 inset;
-    background: #041a43;
+    border: solid 1px #030b29;
+    background: #03050f;
     h2 {
       line-height: 2.6;
       color: #32f4fe;
       font-size: 0.25rem;
       font-weight: normal;
-      background: linear-gradient(#152b5a, #071d4c);
+      background: linear-gradient(#152b5a62, #071d4c54);
       padding: 0 .2rem;
       overflow: hidden;
       .ctrl{

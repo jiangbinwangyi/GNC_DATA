@@ -4,26 +4,52 @@ const state = {
   Websocket: null,
   menu: [{
     src: '/basic',
-    name: '实时数据'
+    name: '实时监视'
   }, {
     src: '/3Dmodel',
     name: '故障诊断'
   }, {
+    src: '/relation',
+    name: '检测分析'
+  }, {
     src: '/track',
     name: '实时预测'
   }, {
-    src: '/relation',
-    name: '历史数据'
+    src: '/setting',
+    name: '故障系统'
   }],
-  menuActive: '实时数据',
+  menuActive: '实时监视',
+  metaList: [{
+    metaColumnId: '288',
+    metaColumnName: '陀螺X零偏'
+  }, {
+    metaColumnId: '289',
+    metaColumnName: '陀螺Y零偏'
+  }, {
+    metaColumnId: '290',
+    metaColumnName: '陀螺Z零偏'
+  }, {
+    metaColumnId: '291',
+    metaColumnName: '帆板X轴'
+  }, {
+    metaColumnId: '292',
+    metaColumnName: '动量轮X轴承温度'
+  }, {
+    metaColumnId: '294',
+    metaColumnName: '动量轮Y轴承温度'
+  }, {
+    metaColumnId: '296',
+    metaColumnName: '动量轮Z轴承温度'
+  }],
   nowTime: '',
   sunTime: '',
   basicData: {
     healthy: {
       time: [500],
-      data: [100],
-      data2: [98.6],
-      data3: [99.6]
+      data: [],
+      data2: [],
+      data4: [],
+      data3: []
     },
     track: [[0, 200, 0, 200, 0]]
   },
@@ -87,20 +113,27 @@ const mutations = {
       // const healthyData = state.basicData.healthy.data
       state.basicData.healthy.time.push((time[time.length - 1]) + 100)
 
-      const newHealthyData = (Math.random() * (1005 - 980 + 1) + 970)
+      const newHealthyData = parseInt((Math.random() * (205 - 160 + 1) + 170)) / 100
       // const anything = state.basicData.healthy.data[ARR.length - 1]
       // if ((time[time.length - 1] / 500) % 3 === 0) {
       //   state.basicData.healthy.data.push(anything - newHealthyData)
       // } else {
       //   state.basicData.healthy.data.push(anything + newHealthyData)
       // }
-      state.basicData.healthy.data.push(parseInt(newHealthyData) / 10)
+      state.basicData.healthy.data.push(newHealthyData)
 
-      const newHealthyData2 = Math.floor(Math.random() * (1005 - 960 + 1) + 970)
-      state.basicData.healthy.data2.push(parseInt(newHealthyData2) / 10)
+      const newHealthyData2 = newHealthyData + parseFloat((Math.random() * 500 + 100).toFixed(2)) / 4000
+      state.basicData.healthy.data2.push(newHealthyData2)
 
-      const newHealthyData3 = Math.floor(Math.random() * (1005 - 950 + 1) + 970)
-      state.basicData.healthy.data3.push(parseInt(newHealthyData3) / 10)
+      const newHealthyData3 = newHealthyData - parseFloat((Math.random() * 500 + 100).toFixed(2)) / 4000
+      state.basicData.healthy.data3.push(newHealthyData3)
+
+      const newHealthyData4 = newHealthyData + parseFloat((Math.random() * 500 + 100).toFixed(2)) / 5000
+      state.basicData.healthy.data4.push(newHealthyData4)
+
+      if (time.length > 20) {
+        state.basicData.healthy.data4.shift()
+      }
 
       if (time.length > 20) {
         state.basicData.healthy.time.shift()
@@ -126,12 +159,12 @@ const mutations = {
       const month = now.getMonth() + 1
       const day = now.getDate()
       state.life.xAxis.push(month + '-' + day)
-      state.life.data.push(parseFloat(((state.life.data[24] - (Math.random() * 2 + 1)).toFixed(2))))
+      state.life.data.push(parseFloat(((state.life.data[24] - (Math.random() * 1.2)).toFixed(2))))
       state.life.xAxis.shift()
       state.life.seconds.shift()
       state.life.data.shift()
     }
-    state.healthyValue = parseFloat((Math.random() * 10 + 90).toFixed(3))
+    state.healthyValue = parseInt((Math.random() * 2 + 95))
 
     const basicTable = [{
       name: 'BD2G02',

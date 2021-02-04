@@ -45,36 +45,44 @@
         </div>
       </el-col>
       <el-col :span="10">
-        <div class="panel bar" style="height: 3.5rem;margin-bottom: .28rem">
+        <div class="panel bar" style="height: 1rem;margin-bottom: .3rem;">
           <div class="main" style="height: 100%">
-            <el-row style="height: 100%">
-              <el-col :span="12">
-                <el-button type="text" style="height: auto">
-                  <i class="el-icon-message-solid" style="font-size: .4rem;vertical-align: -2px;" />
-                  <span style="font-size: .3rem">实时故障警报</span>
-                </el-button>
-                <div class="jingbao">
-                  <img src="@/assets/images/xinhao_gray.png" alt="">
-                  <img src="@/assets/images/xinhao_gray.png" alt="">
-                  <img src="@/assets/images/xinhao_gray.png" alt="">
-                  <img src="@/assets/images/xinhao_gray.png" alt="">
-                  <img src="@/assets/images/xinhao_green.png" alt="">
-                </div>
-              </el-col>
-              <el-col :span="12" style="height: 100%">
-                <v-chart
-                  :options="mapOption3"
-                  autoresize
-                  style="height: 100%;width:100%"
-                />
-              </el-col>
-            </el-row>
+            <div style="height: auto;display:inline-block;color:#fbbe2f">
+              <i class="el-icon-message-solid" style="font-size: .4rem;vertical-align: -2px;" />
+              <span style="font-size: .3rem;padding-left: .1rem">实时故障警报</span>
+            </div>
+            <div class="jingbao">
+              <img v-show="failStatus" src="@/assets/images/xinhao_red.png" alt="">
+              <img src="@/assets/images/xinhao_gray.png" alt="">
+              <img src="@/assets/images/xinhao_gray.png" alt="">
+              <img src="@/assets/images/xinhao_gray.png" alt="">
+              <img src="@/assets/images/xinhao_gray.png" alt="">
+              <img v-show="!failStatus" src="@/assets/images/xinhao_green.png" alt="">
+            </div>
+            <p v-show="failStatus" style="font-size: .2rem; float:right;overflow:hidden;line-height:1;color:#F57474;padding-top: .3rem">
+              <router-link to="/3Dmodel">查看故障详情 ></router-link>
+            </p>
           </div>
         </div>
-        <div class="panel relationBox" style="overflow:hidden; height: 8rem">
+        <div class="panel relationBox" style="overflow:hidden; height: 10.5rem">
           <h2>飞行器实时动作显示</h2>
           <div class="main">
-            <model-obj ref="model3d" src="/static/3d/file12.obj" mtl="/static/3d/file12.mtl" :rotation="rotation" :background-alpha="0" @on-load="modelOnLoad()" />
+            <model-obj
+              ref="model3d"
+              src="/static/3d/file12.obj"
+              mtl="/static/3d/file12.mtl"
+              :rotation="rotation"
+              :background-alpha="0"
+              style="height: 7.8rem"
+              @on-load="modelOnLoad()"
+            />
+            <div class="partBox">
+              <div v-for="(item, index) in part" :key="index" class="partMain" @click="changePart(item.name)">
+                <div v-if="item.isErr && failStatus" class="boxBg" />
+                <p style="position: relative; z-index: 9">{{ item.name }}</p>
+                <img v-show="item.pic" :src="item.pic" alt="帆板" style="width: 1rem;position: relative; z-index: 10">
+              </div>
+            </div>
           </div>
         </div>
       </el-col>
@@ -92,18 +100,20 @@
         </div>
         <div class="panel line2" style="height: 6.5rem">
           <h2 style="float: none; clear: both">飞行器实时运行信息</h2>
-          <el-table :data="tableData" :row-class-name="isError">
-            <el-table-column
-              prop="time"
-              label="时间"
-              width="190"
-            />
-            <el-table-column
-              prop="info"
-              label="信息"
-              min-width="180"
-            />
-          </el-table>
+          <div class="main">
+            <el-table :data="tableData" :row-class-name="isError">
+              <el-table-column
+                prop="time"
+                label="时间"
+                width="140"
+              />
+              <el-table-column
+                prop="info"
+                label="信息"
+                min-width="180"
+              />
+            </el-table>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -172,73 +182,7 @@ export default {
   },
   data() {
     return {
-      mapOption3: {
-        tooltip: {
-          formatter: '{a} <br/>{c} {b}'
-        },
-        series: [
-          {
-            name: '速度',
-            type: 'gauge',
-            z: 3,
-            min: 0,
-            max: 100,
-            center: ['50%', '55%'],
-            radius: '100%',
-            itemStyle: {
-              color: '#FFAB91'
-            },
-            title: {
-              offsetCenter: [0, '70%'],
-              fontSize: 20,
-              color: '#fff'
-            },
-            axisLine: {
-              lineStyle: {
-                width: 3,
-                shadowColor: '#fff',
-                shadowBlur: 5,
-                color: [[0.1, '#F57474'], [0.25, '#fbbe2f'], [0.7, '#0091ff'], [0.85, '#56D0E3'], [1, '#24cf43']]
-              }
-            },
-            axisTick: {
-              length: 15,
-              lineStyle: {
-                color: 'auto'
-              }
-            },
-            splitLine: {
-              length: 20,
-              lineStyle: {
-                color: 'auto'
-              }
-            },
-            axisLabel: {
-              backgroundColor: 'auto',
-              borderRadius: 2,
-              color: '#eee',
-              padding: 3,
-              textShadowBlur: 2,
-              textShadowOffsetX: 1,
-              textShadowOffsetY: 1,
-              textShadowColor: '#222'
-            },
-            detail: {
-              // 其余属性默认使用全局文本样式，详见TEXTSTYLE
-              formatter(value) {
-                value = (value + '').split('.')
-                value.length < 2 && (value.push('00'))
-                return ('00' + value[0]).slice(-2) + '.' + (value[1] + '00').slice(0, 2)
-              },
-              offsetCenter: [0, '-30%'],
-              fontWeight: 'bolder',
-              fontFamily: 'Arial',
-              color: 'auto'
-            },
-            data: [{ value: 92.55, name: '健康值' }]
-          }
-        ]
-      },
+      isFailCount: 0,
       visibleShow: false,
       xingxiadian: false,
       model3d: [],
@@ -269,10 +213,6 @@ export default {
       }, {
         name: '太敏',
         pic: '/static/part/tymgq.png',
-        isErr: false
-      }, {
-        name: '',
-        pic: '',
         isErr: false
       }],
       rotation: {
@@ -327,12 +267,17 @@ export default {
   computed: {
     ...mapState('first', ['basicData', 'nowTime', 'sunTime', 'failStatus', 'tableData'])
   },
+  mounted() {
+    this.setFailCount()
+  },
   methods: {
+    setFailCount() {
+      this.isFailCount++
+      // requestAnimationFrame(this.setFailCount)
+    },
     isError({ row, rowIndex }) {
-      if (row.info.indexOf('异常') > 0) {
+      if (row.info.indexOf('异常') > 0 && this.failStatus) {
         return 'table_error'
-      } else if (rowIndex === 3) {
-        return 'table_warning'
       }
     },
     modelOnLoad() {
@@ -476,12 +421,18 @@ export default {
       }
     }
     .partBox{
-      width: 100%;
-      display: inline-block;
-      vertical-align: top;
+      display: block;
       text-align: center;
+      background: none;
+      div.partMain{
+        position:relative;
+        padding: .2rem .11rem;
+        height: 1.6rem;
+        display:inline-block;
+        border:solid 1px #061b36;
+        margin: 0 1px;
+      }
       img {
-        width: 50%;
         height: auto
       }
       p {
@@ -504,10 +455,12 @@ export default {
     }
   }
   .jingbao{
-    padding: .2rem 0 0 .1rem;
+    padding: .2rem 0 0 .4rem;
+    display: inline-block;
+    vertical-align: -4px;
     img {
-      width: .3rem;
-      margin: 0 2px;
+      width: .37rem;
+      margin: 0 4px;
     }
   }
 }

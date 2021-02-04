@@ -1,0 +1,13 @@
+1.打开nginx 配置文件，添加如下配置信息，注意文件目录位置
+
+    server {
+        listen       8000;
+        server_name  localhost;
+
+        location / {
+            root   D:/MEBDDS/dist/;
+            index  index.html index.htm;
+        }
+    }
+
+2. 打开谷歌浏览器，输入http://localhost:8000 即可访问

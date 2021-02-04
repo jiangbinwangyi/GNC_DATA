@@ -1,75 +1,71 @@
 <template>
   <!-- 页面主体 -->
-  <el-row style="width: 100%" :gutter="20" class="modelBox">
-    <el-col :span="22">
-      <!-- 地图模块 -->
-      <div class="panel map" style="height: 11.8rem;">
-        <h2 style="background: none;">
-          <div class="ctrl switch">
-            <el-switch
-              :value="xingxiadian"
-              active-text="3D模型"
-              inactive-text="知识图谱"
-              @change="model = xingxiadian ? 'zhishi' : '3d'"
-            />
-            <el-button size="mini" type="info" style="margin-left: .2rem">导出故障诊断</el-button>
-          </div>
-        </h2>
-        <div v-loading="loading" class="main" style="padding: 0;position: relative">
-          <div v-show="model === '3d'" style="height: 100%;position: relative">
-            <div class="guzhangBox">
-              <span>故障模式</span>
-              <p>星箭分离66s左右，太阳翼帆板展开故障</p>
-              <span>故障判断</span>
-              <p>N01009+Y 太阳翼帆板信号故障指示</p>
-              <span>故障危害</span>
-              <p>太阳翼帆板未展开，会导致蓄电池过放电，任务可能失败。<br>严重程度：严重</p>
-              <span>处置建议</span>
-              <p>1、 发K2“火工品母线通”<br>2、 发K1“火工品起爆”<br>若指令无效，向上级请示命令</p>
+  <div class="modelBox">
+    <el-row :gutter="20">
+      <el-col :span="22">
+        <!-- 地图模块 -->
+        <div class="panel map" style="height: 11.8rem;">
+          <h2 style="background: none;">
+            <div class="ctrl switch">
+              <el-button size="mini" type="info" style="margin-left: .2rem" @click="print">导出故障诊断</el-button>
             </div>
-            <div class="gzLine1" />
-            <div class="gzLine2" />
-            <!-- <video src="@/assets/video2.mp4" autoplay loop width="auto" height="100%" style="margin-left: -20%" /> -->
-            <model-obj ref="3dModel" src="/static/3d/file12.obj" mtl="/static/3d/file12.mtl" :scale="{ x: 1.1, y: 1.1, z: 1.1 }" :rotation="rotation" :background-alpha="0" style="height: 100%" @on-load="loading = false" />
-          </div>
-          <div v-show="model === 'zhishi'" style="height: 100%;">
-            <v-chart
-              :options="option"
-              autoresize
-              style="height: 100%;width:100%;position:relative;"
-            />
-          </div>
-          <div v-if="model === 'xingmin'" style="height: 100%;">
-            <model-stl src="/static/3d/xingming111.stl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" />
-            <el-button type="info" @click="changeModel('3d')">返回整体</el-button>
-          </div>
-          <div v-else-if="model === 'dll'" style="height: 100%;">
-            <!-- <model-fbx src="/static/3d/file8.fbx" :background-alpha="0" style="height: 90%" @on-load="loading = false" @click="changeModel('zhishi')" /> -->
-            <model-obj src="/static/3d/gu.obj" mtl="/static/3d/gu.mtl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" @on-click="changeColor" />
-            <el-button type="info" @click="changeModel('3d')">返回整体</el-button>
-          </div>
-          <div v-else-if="model === 'tuoluo'" style="height: 100%;">
-            <!-- <model-fbx src="/static/3d/file8.fbx" :background-alpha="0" style="height: 90%" @on-load="loading = false" @click="changeModel('zhishi')" /> -->
-            <model-obj src="/static/3d/tuoluo.obj" mtl="/static/3d/tuoluo.mtl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" @on-click="changeColor" />
-            <el-button type="info" @click="changeModel('3d')">返回整体</el-button>
+          </h2>
+          <div v-loading="loading" class="main" style="padding: 0;position: relative">
+            <div v-show="model === '3d'" style="height: 100%;position: relative">
+              <div v-show="failStatus && isShow" class="guzhangBox">
+                <span>故障模式</span>
+                <p>星箭分离66s左右，太阳翼帆板展开故障</p>
+                <span>故障判断</span>
+                <p>N01009+Y 太阳翼帆板信号故障指示</p>
+                <span>故障危害</span>
+                <p>太阳翼帆板未展开，会导致蓄电池过放电，任务可能失败。<br>严重程度：严重</p>
+                <span>处置建议</span>
+                <p>1、 发K2“火工品母线通”<br>2、 发K1“火工品起爆”<br>若指令无效，向上级请示命令</p>
+                <el-button type="danger" size="mini">
+                  <router-link to="/relation">查看分析详情</router-link>
+                </el-button>
+                <div class="gzLine1" />
+                <div class="gzLine2" />
+              </div>
+              <!-- <video src="@/assets/video2.mp4" autoplay loop width="auto" height="100%" style="margin-left: -20%" /> -->
+              <model-obj ref="3dModel" src="/static/3d/file12.obj" mtl="/static/3d/file12.mtl" :scale="{ x: 1.1, y: 1.1, z: 1.1 }" :rotation="rotation" :background-alpha="0" style="height: 100%" @on-load="loading = false;changeColor($event)" />
+            </div>
+            <div v-show="model === 'zhishi'" style="height: 100%;text-align:center">
+              <img v-show="!failStatus" src="@/assets/images/zhishi1.png" alt="" style="height: 100%">
+              <img v-show="failStatus" src="@/assets/images/zhishi.png" alt="" style="height: 100%">
+            </div>
+            <div v-if="model === 'xingmin'" style="height: 100%;">
+              <model-stl src="/static/3d/xingming111.stl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" />
+              <el-button type="info" @click="changeModel('3d')">返回整体</el-button>
+            </div>
+            <div v-else-if="model === 'dll'" style="height: 100%;">
+              <!-- <model-fbx src="/static/3d/file8.fbx" :background-alpha="0" style="height: 90%" @on-load="loading = false" @click="changeModel('zhishi')" /> -->
+              <model-obj src="/static/3d/gu.obj" mtl="/static/3d/gu.mtl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" />
+              <el-button type="info" @click="changeModel('3d')">返回整体</el-button>
+            </div>
+            <div v-else-if="model === 'tuoluo'" style="height: 100%;">
+              <!-- <model-fbx src="/static/3d/file8.fbx" :background-alpha="0" style="height: 90%" @on-load="loading = false" @click="changeModel('zhishi')" /> -->
+              <model-obj src="/static/3d/tuoluo.obj" mtl="/static/3d/tuoluo.mtl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" />
+              <el-button type="info" @click="changeModel('3d')">返回整体</el-button>
+            </div>
           </div>
         </div>
-      </div>
-    </el-col>
-    <el-col :span="2">
-      <div class="partBox">
-        <div class="panel" style="height: 11.8rem;">
-          <el-row>
-            <div v-for="(item, index) in part" :key="index" style="position:relative; padding: .2rem; height: 1.6rem" @click="changePart(item.name)">
-              <div v-if="item.isErr && failStatus" class="boxBg" />
-              <p style="position: relative; z-index: 9">{{ item.name }}</p>
-              <img v-show="item.pic" :src="item.pic" alt="帆板" style="height: calc(100% - 25px);position: relative; z-index: 10">
-            </div>
-          </el-row>
+      </el-col>
+      <el-col :span="2">
+        <div class="partBox">
+          <div class="panel" style="height: 11.8rem;">
+            <el-row>
+              <div v-for="(item, index) in part" :key="index" style="position:relative; padding: .2rem; height: 1.6rem" @click="changePart(item.name)">
+                <div v-if="item.isErr && failStatus" :class="['boxBg', {warning: item.isWarning}]" />
+                <p style="position: relative; z-index: 9">{{ item.name }}</p>
+                <img v-show="item.pic" :src="item.pic" alt="帆板" style="height: calc(100% - 25px);position: relative; z-index: 10">
+              </div>
+            </el-row>
+          </div>
         </div>
-      </div>
-    </el-col>
-  </el-row>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
@@ -77,13 +73,10 @@ import 'three'
 import { ModelObj, ModelStl } from 'vue-3d-model'
 import { mapState, mapMutations } from 'vuex'
 
-import ECharts from 'vue-echarts'
-import 'echarts'
-
 // import china from './china.js'
 // ECharts.registerMap('china', china)
-import chinaMap from './china.json'
-ECharts.registerMap('china', chinaMap)
+// import chinaMap from './china.json'
+// ECharts.registerMap('china', chinaMap)
 
 const colors = ['#24cf43', '#286c81', '#56D0E3', '#24cf43', '#247af5']
 const parts = [{
@@ -190,8 +183,7 @@ export default {
   name: '',
   components: {
     ModelObj,
-    ModelStl,
-    'v-chart': ECharts
+    ModelStl
   },
   data() {
     var labelRight = {
@@ -203,6 +195,7 @@ export default {
       color: '#ccc'
     }
     return {
+      isShow: false,
       loading: false,
       model: '3d',
       option: {
@@ -281,7 +274,8 @@ export default {
       }, {
         name: '光纤陀螺',
         pic: '/static/part/gxtl.png',
-        isErr: false
+        isErr: true,
+        isWarning: true
       }, {
         name: '飞行器发动机',
         pic: '/static/part/fdj.png',
@@ -510,8 +504,7 @@ export default {
   watch: {
     failStatus: {
       handler(newVal) {
-        console.log(this.$refs['tuoluo'].object.children)
-        const fanban = this.$refs['tuoluo'].object.children.find(c => c.name === 'Ay_柱体.004')
+        const fanban = this.$refs['3dModel'].object.children.find(c => c.name === 'Box11_网格.004')
         if (newVal) {
           fanban.material.color.b = 0.47347
           fanban.material.color.g = 0.47347
@@ -525,12 +518,17 @@ export default {
     }
   },
   methods: {
+    print() {
+      this.$nextTick(() => {
+        window.print()
+      })
+    },
     changeColor(e) {
-      console.log(e)
-      const b = e.object.parent.children.find(c => c.name === 'Box11_网格.004')
-      b.material.color.b = 0
-      b.material.color.g = 255
-      b.material.color.r = 255
+      const fanban = this.$refs['3dModel'].object.children.find(c => c.name === 'Box11_网格.004')
+      fanban.material.color.b = 0.47347
+      fanban.material.color.g = 0.47347
+      fanban.material.color.r = 0.96078
+      this.isShow = true
     },
     changePart(name) {
       if (name === '星敏感器') {
@@ -571,25 +569,29 @@ export default {
 
 <style lang="scss">
 @import 'style/index.scss';
-.mainbox .modelBox  .panel h2{
-  font-size: 0.22rem;
+.mainbox .modelBox{
+  width: 100%;
+  .panel h2 {
+    font-size: 0.22rem;
+  }
 }
 .el-loading-mask{
   background: rgba(0,0,0,0.8);
 }
 .guzhangBox{
   position:absolute;
-  top:6%;
-  left:5%;
-  font-size:14px;
+  top:0;
+  left:9%;
+  width: 30em;
+  font-size: .14rem;
   border: solid 1px #0c2a60;
-  padding: 20px 10px;
+  padding: .15rem;
   color: #fff;
-  line-height: 1.6;
-  box-shadow: 1px 1px 0 2px rgba(0, 0, 0, 0.2);
-  background: rgba(12, 42, 96, 0.8);
+  line-height: 1.7;
+  border: solid 1px #f57474c2;
+  background: #f574741a;
   p {
-    padding: 0 0 .2rem;
+    padding: .05rem 0 .2rem;
   }
 }
 .partBox{
@@ -622,6 +624,33 @@ export default {
     border: solid 3px #F57474;
     background: #F57474;
     // animation: radius 1s ease-out infinite forwards alternate;
+    &.warning {
+      background: #fbbe2f;
+      border-color: #fbbe2f;
+    }
+  }
+}
+.gzLine1, .gzLine2{
+  width: 3rem;
+  height: 1px;
+  background: #f57474c2;
+  position: absolute;
+  right: -3rem;
+  top: 1rem;
+}
+.gzLine2{
+  transform: rotate(-90deg);
+  right: -4.5rem;
+  top: 2.5rem;
+  overflow: visible;
+  &::before{
+    content: '';
+    display: block;
+    width: .15rem;
+    height: .15rem;
+    background: #f57474c2;
+    border-radius: 50%;
+    margin-top: -.07rem;
   }
 }
 .textBox{

@@ -1,64 +1,115 @@
 <template>
   <!-- 页面主体 -->
-  <el-row style="width: 100%" :gutter="20" class="relationBox">
-    <el-col :span="16">
-      <!-- 地图模块 -->
-      <div class="panel map" style="height: 7.8rem;margin-bottom: .3rem">
-        <h2>
-          遥测信号时域分析
-          <div class="ctrl">
-            <el-select v-model="metaValue" size="mini" style="display:inline-block;margin-right: .2rem" @change="setOptionMain">
-              <el-option
-                v-for="item in metaList"
-                :key="item.metaColumnId"
-                :label="item.metaColumnName"
-                :value="item.metaColumnId"
+  <div class="relationBox">
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <!-- 地图模块 -->
+        <div class="panel map" style="height: 11.8rem;">
+          <h2>
+            基于数据故障诊断
+            <div class="ctrl">
+              <el-select v-model="metaValue" size="mini" style="display:inline-block;margin-right: .2rem" @change="setOptionMain">
+                <el-option
+                  v-for="item in metaList"
+                  :key="item.metaColumnId"
+                  :label="item.metaColumnName"
+                  :value="item.metaColumnId"
+                />
+              </el-select>
+              <span style="font-size: .16rem;color: #0091ff"><i class="el-icon-s-order" /> 统计量 </span>
+              <el-switch
+                v-model="xingxiadian"
+                style="display:inline-block;margin-right: .2rem"
+                @change="setCount"
               />
-            </el-select>
-            <span style="font-size: .16rem;color: #0091ff"><i class="el-icon-s-order" /> 统计量 </span>
-            <el-switch
-              v-model="xingxiadian"
-              style="display:inline-block;margin-right: .2rem"
-              @change="setCount"
-            />
-            <span style="font-size: .16rem;color: #fbbe2f"><i class="el-icon-warning" /> 异常检测 </span>
-            <el-switch
-              v-model="isWarning"
-              active-color="#fbbe2f"
-              style="display:inline-block;margin-right: .2rem"
-              @change="setWarning"
-            />
-            <span style="font-size: .16rem;color: #24cf43"><i class="el-icon-s-marketing" /> 拟合比对 </span>
-            <el-switch
-              v-model="isSmooth"
-              active-color="#24cf43"
-              style="display:inline-block"
-              @change="setSmooth"
+              <span style="font-size: .16rem;color: #fbbe2f"><i class="el-icon-warning" /> 异常检测 </span>
+              <el-switch
+                v-model="isWarning"
+                active-color="#fbbe2f"
+                style="display:inline-block;margin-right: .2rem"
+                @change="setWarning"
+              />
+              <el-button size="mini" type="primary" @click="isDetails = true">分析详情</el-button>
+            </div>
+          </h2>
+          <div class="main">
+            <v-chart :options="optionMain" style="height: 50%;" autoresize class="echartBox" />
+            <div style="text-align:center; width:100%; height: 50%" @click="isBig = true">
+              <img src="@/assets/images/zhishi.png" alt="" style="height: 100%">
+            </div>
+          </div>
+        </div>
+      </el-col>
+      <el-col :span="12">
+        <div class="panel map" style="height: 11.8rem;">
+          <h2>基于规则故障诊断</h2>
+          <div class="main">
+            <v-chart
+              :options="treeOption"
+              autoresize
+              style="height: 100%;width:100%"
             />
           </div>
-        </h2>
-        <v-chart :options="optionMain" style="height: 100%;" autoresize class="echartBox" />
-      </div>
-      <div class="panel" style="height: 3.75rem">
-        <h2>平滑FFT分析</h2>
-        <v-chart :options="barOption2" class="echartBox" />
-      </div>
-    </el-col>
-    <el-col :span="8">
-      <div class="panel" style="height: 3.75rem; margin-bottom: .3rem">
-        <h2>一阶差分分析</h2>
-        <v-chart :options="barOption3" class="echartBox" />
-      </div>
-      <div class="panel" style="height: 3.75rem; margin-bottom: .3rem">
-        <h2>移动方差分析</h2>
-        <v-chart :options="barOption4" class="echartBox" />
-      </div>
-      <div class="panel" style="height: 3.75rem">
-        <h2>小波包分解系数能量</h2>
-        <v-chart :options="barOption5" class="echartBox" />
-      </div>
-    </el-col>
-  </el-row>
+        </div>
+      </el-col>
+    </el-row>
+
+    <el-dialog :visible.sync="isBig" custom-class="setDialog2" width="64%" top="1vh">
+      <el-form :inline="true" label-width="80px">
+        <el-form-item label="查询阶段">
+          <el-select>
+            <option label="空间运行段" value="空间运行段" />
+            <option label="载入返回段" value="载入返回段" />
+            <option label="交会捕捉段" value="交会捕捉段" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="查询实体">
+          <el-select>
+            <option label="GNCC" value="GNCC" />
+            <option label="接口装置" value="接口装置" />
+            <option label="GNSS" value="GNSS" />
+            <option label="GNC" value="GNC" />
+            <option label="GNC分系统" value="GNC分系统" />
+            <option label="左V尾舵机" value="左V尾舵机" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <img src="@/assets/images/zhishi.png" alt="" style="width: 90%;">
+    </el-dialog>
+
+    <el-dialog :visible.sync="isDetails" custom-class="setDialog2" width="60%" top="3vh">
+      <el-row>
+        <el-col :span="12">
+          <v-chart
+            :options="barOption2"
+            autoresize
+            style="height: 5rem;width:100%"
+          />
+        </el-col>
+        <el-col :span="12">
+          <v-chart
+            :options="barOption3"
+            autoresize
+            style="height: 5rem;width:100%"
+          />
+        </el-col>
+        <el-col :span="12">
+          <v-chart
+            :options="barOption4"
+            autoresize
+            style="height: 5rem;width:100%"
+          />
+        </el-col>
+        <el-col :span="12">
+          <v-chart
+            :options="barOption5"
+            autoresize
+            style="height: 5rem;width:100%"
+          />
+        </el-col>
+      </el-row>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -92,31 +143,107 @@ export default {
     const myColor = ['#247af5', '#24cf43', '#56D0E3', '#fbbe2f', '#F57474']
 
     return {
+      isDetails: false,
+      isBig: false,
       isSmooth: false,
       isWarning: false,
       xingxiadian: false,
       dataJson: [],
       tableList: [],
-      metaValue: '290',
-      metaList: [{
-        metaColumnId: '289',
-        metaColumnName: '陀螺X零偏'
-      }, {
-        metaColumnId: '290',
-        metaColumnName: '陀螺Y零偏'
-      }, {
-        metaColumnId: '291',
-        metaColumnName: '陀螺Z零偏'
-      }, {
-        metaColumnId: '292',
-        metaColumnName: '动量轮X轴承温度'
-      }, {
-        metaColumnId: '294',
-        metaColumnName: '动量轮Y轴承温度'
-      }, {
-        metaColumnId: '296',
-        metaColumnName: '动量轮Z轴承温度'
-      }],
+      metaValue: '288',
+      treeOption: {
+        tooltip: {
+          trigger: 'item',
+          triggerOn: 'mousemove'
+        },
+        series: [
+          {
+            type: 'tree',
+            data: [{
+              'name': '星箭分类66s左右双太阳翼未展开（||）',
+              'children': [
+                {
+                  'name': '压点开关FL3、FL4任一对地短路或同时开路||火工品母线未接通（&&）',
+                  'children': [
+                    { 'name': 'T>66s&&N01009+Y=0', 'value': 17011 },
+                    { 'name': 'T>66s&&N01010-Y=0', 'value': 17012 },
+                    { 'name': 'T>66s&&V01033=0', 'value': 17013 },
+                    { 'name': 'T>66s&&N01006=0', 'value': 17014 }
+                  ]
+                },
+                {
+                  'name': '火工品起爆开关未接通（&&）',
+                  'value': 2,
+                  'children': [
+                    { 'name': 'T>66s&&N01009+Y=0', 'value': 2 },
+                    { 'name': 'T>66s&&N01010-Y=0', 'value': 5842 },
+                    { 'name': 'T>66s&&V01034=0', 'value': 5843 },
+                    { 'name': 'T>66s&&N01006=2A', 'value': 1041 }
+                  ]
+                },
+                {
+                  'name': '压缩释放机构故障||点火器故障||切割器故障（&&）',
+                  'children': [
+                    { 'name': 'T>66s&&N01009+Y=0', 'value': 1758 },
+                    { 'name': 'T>66s&&N01010-Y=0', 'value': 1759 },
+                    { 'name': 'T>66s&&V01033=23V', 'value': 2165 },
+                    { 'name': 'T>66s&&V01034=1', 'value': 586 },
+                    { 'name': 'T>66s&&N01006=0A', 'value': 3331 }
+                  ]
+                }
+              ]
+            }],
+            top: '0',
+            left: '14%',
+            bottom: '0',
+            right: '14%',
+            symbolSize: 1,
+            roam: true,
+            label: {
+              position: 'inside',
+              verticalAlign: 'middle',
+              align: 'center',
+              fontSize: 12,
+              backgroundColor: '#fff',
+              color: '#fff',
+              formatter(param) {
+                console.log(11111, param)
+                let name = ''
+                const len = 21
+                for (let i = 0; i < (param.name.length + len); i += len) {
+                  if (param.name.substring(i, i + len)) {
+                    if (i > 0) {
+                      name += '\n'
+                    }
+                    name += param.name.substring(i, i + len)
+                  }
+                }
+                const result = param.value < 100 ? `{b|${name}}` : `{a|${name}}`
+                return [result].join('\n')
+              },
+              rich: {
+                a: {
+                  color: '#0091ff',
+                  padding: 10,
+                  lineHeight: 20
+                },
+                b: {
+                  color: '#fff',
+                  padding: 10,
+                  backgroundColor: '#F57474',
+                  lineHeight: 20
+                }
+              }
+            },
+            leaves: {
+              label: {}
+            },
+            expandAndCollapse: true,
+            animationDuration: 550,
+            animationDurationUpdate: 750
+          }
+        ]
+      },
       nowTime: '',
       count: {
         total: 235411
@@ -127,15 +254,29 @@ export default {
       barOption3: null,
       barOption5: null,
       optionDefault: {
+        title: {
+          text: '',
+          textStyle: {
+            color: '#fff'
+          }
+        },
         xAxis: {
-          name: '信号',
+          name: '时间',
           data: [],
           boundaryGap: false,
           axisTick: {
             show: false
           },
+          axisLine: {
+            lineStyle: {
+              color: '#fff',
+              width: 1,
+              type: 'solid'
+            }
+          },
           axisLabel: {
-            color: '#fff'
+            color: '#fff',
+            fontSize: '12'
           }
         },
         grid: [{
@@ -150,9 +291,6 @@ export default {
           //   return params[0].value
           // },
           trigger: 'axis',
-          axisPointer: {
-            type: 'cross'
-          },
           padding: [5, 10]
         },
         toolbox: {
@@ -173,12 +311,19 @@ export default {
           axisTick: {
             show: false
           },
+          axisLine: {
+            lineStyle: {
+              color: '#fff',
+              width: 1,
+              type: 'solid'
+            }
+          },
           axisLabel: {
             color: '#fff'
           }
         },
         series: [{
-          name: 'expected',
+          name: '值',
           type: 'line',
           animationDuration: 2800,
           animationEasing: 'cubicInOut',
@@ -190,14 +335,16 @@ export default {
     }
   },
   computed: {
-    ...mapState('first', ['basicData'])
+    ...mapState('first', ['basicData', 'metaList'])
   },
   created() {
-    // this.setBarData()
     // this.formInline.metaColumnIds = this.metaList.map(e => e.metaColumnId)
     this.getData().then(res => {
-      console.log(res)
       this.dataJson = res
+      const data = require('./data4.json')
+      this.dataJson.push({ metaColumnId: '288', tdata: data.map((e, i) => {
+        return { [i + 1]: e.tx }
+      }).filter((e, i) => i % 2 === 0 && i % 3 === 0 && i % 5 === 0) })
       this.setOptionMain()
     })
     // this.getTimeDomainResult(this.formInline).then(res => {
@@ -206,6 +353,11 @@ export default {
     // })
   },
   methods: {
+    getTreeData() {
+      return new Promise((resolve, reject) => {
+        resolve(require('./tree.json'))
+      })
+    },
     setSmooth() {
       if (this.isSmooth) {
         const warningOption = JSON.parse(JSON.stringify(this.optionMain))
@@ -261,14 +413,14 @@ export default {
           show: false,
           dimension: 0,
           pieces: [{
-            lte: 100,
+            lte: 695,
             color: '#0091ff'
           }, {
-            gt: 100,
-            lte: 200,
+            gt: 695,
+            lte: 800,
             color: '#fbbe2f'
           }, {
-            gt: 200,
+            gt: 800,
             color: '#0091ff'
           }]
         }
@@ -278,9 +430,9 @@ export default {
           },
           data: [[{
             name: '异常部分',
-            xAxis: this.optionMain.xAxis.data[100]
+            xAxis: this.optionMain.xAxis.data[695]
           }, {
-            xAxis: this.optionMain.xAxis.data[200]
+            xAxis: this.optionMain.xAxis.data[800]
           }]]
         }
         this.optionMain = warningOption
@@ -323,44 +475,30 @@ export default {
         // 一阶
         const newSetOption2 = JSON.parse(JSON.stringify(this.optionMain))
         newSetOption2.series[0].data = this.optionMain.series[0].data.map((e, i) => {
-          if (i <= 110) {
+          if (i <= 650) {
             return (parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1
-          } else if (i > 110 && i < 156) {
-            return (parseFloat(Math.random().toFixed(2)) * 8 + 7) / 50 - 10
-          } else if (i >= 156 && i < 360) {
-            return (parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1
-          } else if (i >= 360 && i < 420) {
-            return (parseFloat(Math.random().toFixed(2)) * 8 + 7) / 50 - 10
-          } else if (i >= 420 && i < 600) {
-            return (parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1
-          } else if (i >= 600 && i < 650) {
+          } else if (i > 650 && i < 700) {
             return (parseFloat(Math.random().toFixed(2)) * 8 + 7) / 50 - 10
           } else {
             return (parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1
           }
         })
         newSetOption2.grid[0].bottom = '22%'
+        newSetOption2.title.text = '1阶差分分析'
         this.barOption3 = newSetOption2
         // 移动方差
         const newSetOption3 = JSON.parse(JSON.stringify(this.optionMain))
         newSetOption3.series[0].data = this.optionMain.series[0].data.map((e, i) => {
           if (i <= 110) {
             return -((parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1)
-          } else if (i > 110 && i < 156) {
-            return -((parseFloat(Math.random().toFixed(2)) * 8 + 7) / 50 - 10)
-          } else if (i >= 156 && i < 360) {
-            return -((parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1)
-          } else if (i >= 360 && i < 420) {
-            return -((parseFloat(Math.random().toFixed(2)) * 8 + 7) / 50 - 10)
-          } else if (i >= 420 && i < 600) {
-            return -((parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1)
-          } else if (i >= 600 && i < 650) {
+          } else if (i > 650 && i < 700) {
             return -((parseFloat(Math.random().toFixed(2)) * 8 + 7) / 50 - 10)
           } else {
             return -((parseFloat(Math.random().toFixed(2)) * 2) / 20 - 1)
           }
         })
         newSetOption3.grid[0].bottom = '22%'
+        newSetOption3.title.text = '移动方差分析'
         this.barOption4 = newSetOption3
 
         const newSetOption4 = JSON.parse(JSON.stringify(this.optionDefault))
@@ -373,23 +511,33 @@ export default {
         newSetOption4.series[0].data = [num1, num2, num3, 1, 1, 0, 0]
         newSetOption4.grid[0].bottom = '22%'
         newSetOption4.xAxis.boundaryGap = true
+        newSetOption4.title.text = '小波包分解系数能量'
         this.barOption5 = newSetOption4
       })
       // 频域分析
       this.getFFTMainResult().then(response => {
-        const dataList = response.find(e => e.metaColumnId === this.metaValue)
+        let dataList = {
+          FrequencyAmplitude: []
+        }
+        if (this.metaValue === '288') {
+          const data = require('./data5.json')
+          dataList.FrequencyAmplitude = data.map((e, i) => {
+            return parseFloat(e.FFT_x)
+          })
+        } else {
+          dataList = response.find(e => e.metaColumnId === this.metaValue)
+        }
         const newSetOption = JSON.parse(JSON.stringify(this.optionDefault))
-        console.log(dataList)
         newSetOption.xAxis.data = Object.keys(dataList.FrequencyAmplitude)
         newSetOption.series[0].data = Object.values(dataList.FrequencyAmplitude)
         newSetOption.grid[0].bottom = '20%'
+        newSetOption.title.text = 'FFT频域分析'
         this.barOption2 = newSetOption
       })
     },
     getData() {
       return new Promise((resolve, reject) => {
         const data = require('./data.json')
-        console.log(data)
         resolve(data)
       })
     },
@@ -399,7 +547,6 @@ export default {
         const data = this.dataJson.find(e => {
           return e.metaColumnId === id
         }).tdata
-        console.log(222222222, data)
         resolve(data)
       })
     },
@@ -424,6 +571,7 @@ export default {
 <style lang="scss">
 @import 'style/index.scss';
 .relationBox{
+  width: 100%;
   .panel{
     height: 5.65rem;
   }
@@ -448,5 +596,8 @@ export default {
       }
     }
   }
+}
+.setDialog2 {
+  background: #010101;
 }
 </style>
