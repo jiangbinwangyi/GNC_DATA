@@ -1,26 +1,24 @@
-<button onclick="dd(Event, this)" id="test">cesh</button>
-<script>
-    function dd(event, self) {
-        console.log(new event(self))
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+    <iframe src="http://172.16.1.12:9528/#/basic" frameborder="0"></iframe>
+  <style>
+    html,body{
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      margin: 0;
+      font-size: 0;
     }
-
-    document.querySelector('#test').addEventListener('click', (event) => {
-        console.log(event)
-    })
-
-    const arr = [{
-        name: 'dd',
-        age: 18
-    }, {
-        name: 'fgef',
-        age: 22
-    }]
-
-    arr.map(e => {
-        e.name += '666'
-        e.sex = '娜娜'
-    })
-
-    console.log(arr)
-    console.log(222)
-</script>
+    iframe{
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</body>
+</html>

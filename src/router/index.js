@@ -71,6 +71,10 @@ export const constantRoutes = [
     isMenu: false,
     redirect: '/setting',
     children: [{
+      path: '/sz',
+      component: () => import('@/pagesFront/shenzong/'),
+      meta: {}
+    }, {
       path: '/setting',
       component: () => import('@/pagesFront/setting'),
       meta: { name: '故障系统' }
@@ -608,7 +612,7 @@ export const templateRoutes = [
 ]
 
 const createRouter = () => new Router({
-  mode: 'history', // require service support
+  // mode: 'history', // require service support, 由于使用electron，路径模式只能为hash
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })

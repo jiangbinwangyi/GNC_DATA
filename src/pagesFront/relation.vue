@@ -57,54 +57,54 @@
     <el-dialog :visible.sync="isBig" custom-class="setDialog2" width="64%" top="1vh">
       <el-form :inline="true" label-width="80px">
         <el-form-item label="查询阶段">
-          <el-select>
-            <option label="空间运行段" value="空间运行段" />
-            <option label="载入返回段" value="载入返回段" />
-            <option label="交会捕捉段" value="交会捕捉段" />
+          <el-select v-model="isBigJd">
+            <el-option label="空间运行段" value="空间运行段" />
+            <el-option label="载入返回段" value="载入返回段" />
+            <el-option label="交会捕捉段" value="交会捕捉段" />
           </el-select>
         </el-form-item>
         <el-form-item label="查询实体">
-          <el-select>
-            <option label="GNCC" value="GNCC" />
-            <option label="接口装置" value="接口装置" />
-            <option label="GNSS" value="GNSS" />
-            <option label="GNC" value="GNC" />
-            <option label="GNC分系统" value="GNC分系统" />
-            <option label="左V尾舵机" value="左V尾舵机" />
+          <el-select v-model="isBigSt">
+            <el-option label="GNCC" value="GNCC" />
+            <el-option label="接口装置" value="接口装置" />
+            <el-option label="GNSS" value="GNSS" />
+            <el-option label="GNC" value="GNC" />
+            <el-option label="GNC分系统" value="GNC分系统" />
+            <el-option label="左V尾舵机" value="左V尾舵机" />
           </el-select>
         </el-form-item>
       </el-form>
       <img src="@/assets/images/zhishi.png" alt="" style="width: 90%;">
     </el-dialog>
 
-    <el-dialog :visible.sync="isDetails" custom-class="setDialog2" width="60%" top="3vh">
+    <el-dialog :visible.sync="isDetails" custom-class="setDialog2" width="70%" top="3vh">
       <el-row>
         <el-col :span="12">
           <v-chart
             :options="barOption2"
             autoresize
-            style="height: 5rem;width:100%"
+            style="height: 5.8rem;width:100%"
           />
         </el-col>
         <el-col :span="12">
           <v-chart
             :options="barOption3"
             autoresize
-            style="height: 5rem;width:100%"
+            style="height: 5.8rem;width:100%"
           />
         </el-col>
         <el-col :span="12">
           <v-chart
             :options="barOption4"
             autoresize
-            style="height: 5rem;width:100%"
+            style="height: 5.8rem;width:100%"
           />
         </el-col>
         <el-col :span="12">
           <v-chart
             :options="barOption5"
             autoresize
-            style="height: 5rem;width:100%"
+            style="height: 5.8rem;width:100%"
           />
         </el-col>
       </el-row>
@@ -145,6 +145,8 @@ export default {
     return {
       isDetails: false,
       isBig: false,
+      isBigJd: '',
+      isBigSt: '',
       isSmooth: false,
       isWarning: false,
       xingxiadian: false,

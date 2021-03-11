@@ -46,7 +46,7 @@ Object.keys(filters).forEach(key => {
 })
 
 Vue.config.productionTip = false
-
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 new Vue({
   el: '#app',
   router,

@@ -26,7 +26,7 @@
               <el-row :gutter="10">
                 <el-col v-for="item in 3" :key="item + car * 3 - 3" :span="8">
                   <div class="settingbox" @click="setActiveImg(item + car * 3 - 3, 'gnc')">
-                    <img :src="'/static/GNC/gnc' + (item + car * 3 - 3) + '.png'" style="width: 100%; height: auto;" alt="">
+                    <img :src="'./static/GNC/gnc' + (item + car * 3 - 3) + '.png'" style="width: 100%; height: auto;" alt="">
                     <p style="margin-bottom: 0">{{ item + car * 3 - 3 }}</p>
                   </div>
                 </el-col>
@@ -43,7 +43,7 @@
               <el-row :gutter="10">
                 <el-col v-for="item in 3" :key="item + car * 3 - 3" :span="8">
                   <div class="settingbox" @click="setActiveImg(item + car * 3 - 3, 'phm')">
-                    <img :src="'/static/phm/phm' + (item + car * 3 - 3) + '.png'" style="width: 100%; height: auto;" alt="">
+                    <img :src="'./static/phm/phm' + (item + car * 3 - 3) + '.png'" style="width: 100%; height: auto;" alt="">
                     <p style="margin-bottom: 0">{{ imgTitle[item + car * 3 - 4] }}</p>
                   </div>
                 </el-col>
@@ -59,7 +59,7 @@
       <div class="dialogMain">
         <el-carousel ref="diabox" :autoplay="false" height="100vh">
           <el-carousel-item v-for="item in 9" :key="item + 'j'">
-            <img :src="'/static/' + activeType + '/' + activeType + item + '.png'" style="width: 100%; height: auto;" alt="">
+            <img :src="'./static/' + activeType + '/' + activeType + item + '.png'" style="width: 100%; height: auto;" alt="">
           </el-carousel-item>
         </el-carousel>
       </div>

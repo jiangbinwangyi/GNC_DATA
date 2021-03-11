@@ -223,36 +223,36 @@ export default {
       },
       tableData: [{
         date: '1',
-        name: '星敏Vx',
-        address: '星敏',
+        name: '陀螺x零偏',
+        address: '陀螺',
         time: '2020-05-12 08:23:15',
         result: '严重',
         method: '调试XXX'
       }, {
         date: '2',
-        name: '星敏Vy',
-        address: '星敏',
+        name: '陀螺y零偏',
+        address: '陀螺',
         time: '2020-05-12 08:23:15',
         result: '严重',
         method: '调试XXX'
       }, {
         date: '3',
-        name: '星敏Vz',
-        address: '星敏',
+        name: '陀螺z零偏',
+        address: '陀螺',
         time: '2020-05-12 08:23:15',
         result: '严重',
         method: '调试XXX'
       }, {
         date: '4',
         name: '矫正时间',
-        address: '星敏',
+        address: '陀螺',
         time: '2020-05-12 08:23:15',
         result: '一般',
         method: '调试XXX'
       }, {
         date: '5',
-        name: '星敏Vy',
-        address: '星敏',
+        name: '陀螺z零偏',
+        address: '陀螺',
         time: '2020-05-12 08:23:15',
         result: '严重',
         method: '调试XXX'

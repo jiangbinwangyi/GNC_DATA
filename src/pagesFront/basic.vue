@@ -69,8 +69,8 @@
           <div class="main">
             <model-obj
               ref="model3d"
-              src="/static/3d/file12.obj"
-              mtl="/static/3d/file12.mtl"
+              src="./static/3d/file10.obj"
+              mtl="./static/3d/file10.mtl"
               :rotation="rotation"
               :background-alpha="0"
               style="height: 7.8rem"
@@ -188,11 +188,11 @@ export default {
       model3d: [],
       part: [{
         name: '太阳帆板',
-        pic: '/static/part/tyfb.png',
+        pic: './static/part/tyfb.png',
         isErr: true
       }, {
         name: '星敏感器',
-        pic: '/static/part/xmgq.png',
+        pic: './static/part/xmgq.png',
         isErr: false
       }, {
         name: '磁力矩器',
@@ -200,19 +200,19 @@ export default {
         isErr: false
       }, {
         name: '动量轮',
-        pic: '/static/part/dll.png',
+        pic: './static/part/dll.png',
         isErr: false
       }, {
         name: '光纤陀螺',
-        pic: '/static/part/gxtl.png',
+        pic: './static/part/gxtl.png',
         isErr: false
       }, {
         name: '发动机',
-        pic: '/static/part/fdj.png',
+        pic: './static/part/fdj.png',
         isErr: false
       }, {
         name: '太敏',
-        pic: '/static/part/tymgq.png',
+        pic: './static/part/tymgq.png',
         isErr: false
       }],
       rotation: {
@@ -223,7 +223,7 @@ export default {
       globe: {
         globe: {
           globeRadius: 26,
-          baseTexture: '/static/globe/world.topo.bathy.200401.jpg',
+          baseTexture: './static/globe/world.topo.bathy.200401.jpg',
           displacementQuality: 'medium',
           viewControl: {
             autoRotateSpeed: 0.01,
@@ -281,11 +281,8 @@ export default {
       }
     },
     modelOnLoad() {
-      this.model3d = this.$refs['model3d'].object.children.filter(c => [
-        'Box10_网格', 'Rectangle15_网格.001', 'Line11_网格.002',
-        'Box11_网格.004', 'Line12_网格.006', 'Rectangle16_网格.005'
-      ].indexOf(c.name) > -1)
-      console.log(this.model3d[0])
+      this.model3d = this.$refs['model3d'].object.children.filter(c => c.name.indexOf('fanban_right_Box10_网格') > -1)
+      console.log(this.model3d)
       this.rotate()
     },
     rotate() {

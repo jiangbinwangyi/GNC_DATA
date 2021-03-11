@@ -28,24 +28,24 @@
                 <div class="gzLine2" />
               </div>
               <!-- <video src="@/assets/video2.mp4" autoplay loop width="auto" height="100%" style="margin-left: -20%" /> -->
-              <model-obj ref="3dModel" src="/static/3d/file12.obj" mtl="/static/3d/file12.mtl" :scale="{ x: 1.1, y: 1.1, z: 1.1 }" :rotation="rotation" :background-alpha="0" style="height: 100%" @on-load="loading = false;changeColor($event)" />
+              <model-obj ref="3dModel" src="./static/3d/file12.obj" mtl="./static/3d/file12.mtl" :scale="{ x: 1.1, y: 1.1, z: 1.1 }" :rotation="rotation" :background-alpha="0" style="height: 100%" @on-load="loading = false;changeColor($event)" />
             </div>
             <div v-show="model === 'zhishi'" style="height: 100%;text-align:center">
               <img v-show="!failStatus" src="@/assets/images/zhishi1.png" alt="" style="height: 100%">
               <img v-show="failStatus" src="@/assets/images/zhishi.png" alt="" style="height: 100%">
             </div>
             <div v-if="model === 'xingmin'" style="height: 100%;">
-              <model-stl src="/static/3d/xingming111.stl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" />
+              <model-stl src="./static/3d/xingming111.stl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" />
               <el-button type="info" @click="changeModel('3d')">返回整体</el-button>
             </div>
             <div v-else-if="model === 'dll'" style="height: 100%;">
-              <!-- <model-fbx src="/static/3d/file8.fbx" :background-alpha="0" style="height: 90%" @on-load="loading = false" @click="changeModel('zhishi')" /> -->
-              <model-obj src="/static/3d/gu.obj" mtl="/static/3d/gu.mtl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" />
+              <!-- <model-fbx src="./static/3d/file8.fbx" :background-alpha="0" style="height: 90%" @on-load="loading = false" @click="changeModel('zhishi')" /> -->
+              <model-obj src="./static/3d/gu.obj" mtl="./static/3d/gu.mtl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" />
               <el-button type="info" @click="changeModel('3d')">返回整体</el-button>
             </div>
             <div v-else-if="model === 'tuoluo'" style="height: 100%;">
-              <!-- <model-fbx src="/static/3d/file8.fbx" :background-alpha="0" style="height: 90%" @on-load="loading = false" @click="changeModel('zhishi')" /> -->
-              <model-obj src="/static/3d/tuoluo.obj" mtl="/static/3d/tuoluo.mtl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" />
+              <!-- <model-fbx src="./static/3d/file8.fbx" :background-alpha="0" style="height: 90%" @on-load="loading = false" @click="changeModel('zhishi')" /> -->
+              <model-obj src="./static/3d/tuoluo.obj" mtl="./static/3d/tuoluo.mtl" :rotation="rotation" :background-alpha="0" style="height: 90%" @on-load="loading = false" />
               <el-button type="info" @click="changeModel('3d')">返回整体</el-button>
             </div>
           </div>
@@ -257,11 +257,11 @@ export default {
       },
       part: [{
         name: '太阳帆板',
-        pic: '/static/part/tyfb.png',
+        pic: './static/part/tyfb.png',
         isErr: true
       }, {
         name: '星敏感器',
-        pic: '/static/part/xmgq.png',
+        pic: './static/part/xmgq.png',
         isErr: false
       }, {
         name: '磁力矩器',
@@ -269,20 +269,20 @@ export default {
         isErr: false
       }, {
         name: '动量轮',
-        pic: '/static/part/dll.png',
+        pic: './static/part/dll.png',
         isErr: false
       }, {
         name: '光纤陀螺',
-        pic: '/static/part/gxtl.png',
+        pic: './static/part/gxtl.png',
         isErr: true,
         isWarning: true
       }, {
         name: '飞行器发动机',
-        pic: '/static/part/fdj.png',
+        pic: './static/part/fdj.png',
         isErr: false
       }, {
         name: '太阳敏感器',
-        pic: '/static/part/tymgq.png',
+        pic: './static/part/tymgq.png',
         isErr: false
       }],
       tableData: [{
